@@ -209,6 +209,10 @@ async def run_pipeline(
                                 http,
                                 refresh=refresh,
                                 parse_executor=parse_executor,
+                                identity_reviewed=(
+                                    reviewed_only
+                                    and f"apple-podcast:{candidate.apple_id}" in reviews
+                                ),
                             )
                             if result.lead.candidate_status == "Needs review":
                                 await approve_candidate(

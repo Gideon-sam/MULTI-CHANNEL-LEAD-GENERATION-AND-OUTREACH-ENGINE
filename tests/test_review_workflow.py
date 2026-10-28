@@ -161,3 +161,83 @@ def test_pipeline_finishes_other_sources_after_one_failure(tmp_path, monkeypatch
     assert (tmp_path / "output/Human_Review.xlsx").is_file()
     progress = json.loads((tmp_path / "output/progress.json").read_text())
     assert progress["status"] == "completed"
+
+
+def test_reviewed_only_passes_identity_review_without_qualifying_itself(tmp_path, monkeypatch):
+    candidate = PodcastCandidate(
+        "123",
+        "Synthetic Person",
+        "Synthetic Show",
+        "",
+        "https://example.test/feed",
+        "https://example.test/podcast",
+        "Test",
+    )
+    input_path = tmp_path / "input.csv"
+    with input_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(asdict(candidate)))
+        writer.writeheader()
+        writer.writerow(asdict(candidate))
+    reviews_path = tmp_path / "reviews.json"
+    reviews_path.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "reviews": [
+                    {
+                        "stable_creator_id": "apple-podcast:123",
+                        "creator_identity_key": "https://example.test/creator",
+                        "reviewer": "Synthetic test",
+                        "reviewed_at": "2026-10-26",
+                        "rationale": "Synthetic evidence",
+                        "creator_name": "Synthetic Person",
+                        "country_iso2": "US",
+                        "best_channel": "Email",
+                        "channel_handle_or_url": "owned@example.test",
+                        "backup_channel": "Website",
+                        "backup_handle_or_url": "https://example.test/contact",
+                        "contact_active_date": "2026-10-25",
+                        "need_description": "Synthetic workflow evidence",
+                        "proofs": {
+                            kind: {
+                                "url": "https://example.test/proof",
+                                "quote": "Synthetic evidence",
+                            }
+                            for kind in PROOF_KINDS
+                        },
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    observed = {}
+
+    async def fake_enrich(candidate, *_args, **kwargs):
+        observed["identity_reviewed"] = kwargs["identity_reviewed"]
+        return EnrichmentResult(
+            Lead(
+                stable_creator_id=f"apple-podcast:{candidate.apple_id}",
+                candidate_status="Needs review",
+                checked_date="2026-10-26",
+            )
+        )
+
+    async def fake_approve(lead, review, *_args, **_kwargs):
+        assert review["stable_creator_id"] == "apple-podcast:123"
+        return lead
+
+    monkeypatch.setattr("incubrix_engine.pipeline.enrich", fake_enrich)
+    monkeypatch.setattr("incubrix_engine.pipeline.approve_candidate", fake_approve)
+    reviewed_config = replace(config(), review_file=str(reviews_path.relative_to(tmp_path)))
+    result = asyncio.run(
+        run_pipeline(
+            tmp_path,
+            reviewed_config,
+            logging.getLogger("test"),
+            input_path=input_path,
+            reviewed_only=True,
+        )
+    )
+    assert observed["identity_reviewed"] is True
+    assert result.metrics["pending_review"] == 1

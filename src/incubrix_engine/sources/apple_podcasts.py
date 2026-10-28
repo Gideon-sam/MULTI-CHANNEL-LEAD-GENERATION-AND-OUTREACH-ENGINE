@@ -627,6 +627,7 @@ async def enrich(
     http: HttpClient,
     refresh: bool = False,
     parse_executor: Executor | None = None,
+    identity_reviewed: bool = False,
 ) -> EnrichmentResult:
     podcast_index = candidate.discovery_provider == "Podcast Index API"
     lead = Lead(
@@ -712,7 +713,8 @@ async def enrich(
         return EnrichmentResult(lead, lead.rejection_reason)
 
     creator = _creator_name(candidate, feed)
-    if not _looks_like_person(creator, candidate.collection_name):
+    creator_heuristic_passed = _looks_like_person(creator, candidate.collection_name)
+    if not creator_heuristic_passed and not identity_reviewed:
         lead.rejection_reason = "not_clearly_creator_led"
         return EnrichmentResult(lead, lead.rejection_reason)
 
@@ -749,6 +751,8 @@ async def enrich(
     ]
     latest = eligible_episodes[0]
     lead.metadata["feed_fetched_at"] = datetime.fromtimestamp(response.fetched_at, UTC).isoformat()
+    lead.metadata["creator_identity_heuristic_passed"] = creator_heuristic_passed
+    lead.metadata["creator_identity_review_required"] = not creator_heuristic_passed
     lead.metadata["feed_stale"] = response.stale
     lead.metadata["feed_sha256"] = hashlib.sha256(response.content).hexdigest()
     lead.metadata["official_site_url"] = str(feed.feed.get("link") or "")
