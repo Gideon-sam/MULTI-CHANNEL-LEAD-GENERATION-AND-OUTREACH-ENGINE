@@ -8,7 +8,7 @@ import re
 import time
 from collections import Counter
 from dataclasses import dataclass, field
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from typing import Self
 from urllib.parse import urlparse
 
@@ -313,7 +313,7 @@ def _contact(description: str, profile_url: str) -> tuple[str, str, str, str, st
 
 async def discover_channels(config: Config, api: YouTubeApi) -> list[YouTubeCandidate]:
     regions = ["US", "US", "US", "GB", "CA", "AU", "IE", "NZ", "SG"]
-    queries: list[tuple[str, str]] = []
+    queries: list[tuple[str, str, str]] = []
     modifiers = ("coach", "consultant", "educator", "creator", "podcast host")
     for index, term in enumerate(config.search_terms):
         if re.search(
@@ -322,30 +322,46 @@ async def discover_channels(config: Config, api: YouTubeApi) -> list[YouTubeCand
             query = term
         else:
             query = f"{term} {modifiers[index % len(modifiers)]}"
-        queries.append((query, regions[index % len(regions)]))
+        # Recent-video discovery raises the share of active candidates without changing
+        # qualification. Channel search remains in the mix for breadth and stable discovery.
+        result_type = "video" if index % 2 == 0 else "channel"
+        queries.append((query, regions[index % len(regions)], result_type))
         if len(queries) >= config.youtube_max_search_calls:
             break
 
     semaphore = asyncio.Semaphore(8)
 
-    async def search(query: str, region: str) -> tuple[str, dict]:
+    async def search(query: str, region: str, result_type: str) -> tuple[str, dict]:
         async with semaphore:
+            params: dict[str, object] = {
+                "part": "snippet",
+                "type": result_type,
+                "q": query,
+                "maxResults": config.youtube_result_limit,
+                "relevanceLanguage": "en",
+                "regionCode": region,
+                "safeSearch": "moderate",
+            }
+            if result_type == "video":
+                cutoff = date.fromisoformat(config.checked_date) - timedelta(days=60)
+                params.update(
+                    {
+                        "order": "date",
+                        "publishedAfter": cutoff.isoformat() + "T00:00:00Z",
+                        "videoEmbeddable": "true",
+                        "videoSyndicated": "true",
+                    }
+                )
             payload = await api.get(
                 "search",
-                {
-                    "part": "snippet",
-                    "type": "channel",
-                    "q": query,
-                    "maxResults": config.youtube_result_limit,
-                    "relevanceLanguage": "en",
-                    "regionCode": region,
-                    "safeSearch": "moderate",
-                },
+                params,
                 cost=100,
             )
             return query, payload
 
-    results = await asyncio.gather(*(search(query, region) for query, region in queries))
+    results = await asyncio.gather(
+        *(search(query, region, result_type) for query, region, result_type in queries)
+    )
     found: dict[str, YouTubeCandidate] = {}
     for query, payload in results:
         for item in payload.get("items", []):

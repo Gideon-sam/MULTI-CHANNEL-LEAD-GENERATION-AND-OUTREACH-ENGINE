@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import asyncio
+from types import SimpleNamespace
+
 from incubrix_engine.sources.youtube import (
     _contact,
     _creator_led,
     _creator_name,
     _iso_duration_minutes,
+    discover_channels,
 )
 
 
@@ -34,3 +38,28 @@ def test_contact_uses_public_description_without_guessing() -> None:
         "Instagram",
         "https://instagram.com/alex",
     )
+
+
+def test_discovery_mixes_recent_videos_and_channels_without_changing_gates() -> None:
+    class FakeApi:
+        def __init__(self) -> None:
+            self.calls = []
+
+        async def get(self, resource, params, *, cost=1):
+            self.calls.append((resource, params, cost))
+            return {"items": []}
+
+    api = FakeApi()
+    config = SimpleNamespace(
+        search_terms=["business", "marketing"],
+        youtube_max_search_calls=2,
+        youtube_result_limit=50,
+        checked_date="2026-10-28",
+    )
+    assert asyncio.run(discover_channels(config, api)) == []
+    video = api.calls[0][1]
+    channel = api.calls[1][1]
+    assert video["type"] == "video"
+    assert video["publishedAfter"] == "2026-08-29T00:00:00Z"
+    assert channel["type"] == "channel"
+    assert "publishedAfter" not in channel
