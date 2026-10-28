@@ -103,7 +103,20 @@ class Lead:
         row = asdict(self)
         return {column: row[column] for column in LEAD_COLUMNS}
 
+    def source_system(self) -> str:
+        """Return an explicit provenance label without changing any lead decision."""
+        if self.stable_creator_id.startswith("youtube-channel:"):
+            return "YouTube Data API"
+        if self.stable_creator_id.startswith("apple-podcast:"):
+            return "Apple Podcasts + publisher RSS"
+        return str(self.metadata.get("source_system", "Unknown"))
+
     def evidence_row(self) -> dict[str, Any]:
-        row = asdict(self)
-        row["metadata"] = json.dumps(row["metadata"], ensure_ascii=False, sort_keys=True)
+        raw = asdict(self)
+        row: dict[str, Any] = {}
+        for key, value in raw.items():
+            row[key] = value
+            if key == "stable_creator_id":
+                row["source_system"] = self.source_system()
+        row["metadata"] = json.dumps(raw["metadata"], ensure_ascii=False, sort_keys=True)
         return row

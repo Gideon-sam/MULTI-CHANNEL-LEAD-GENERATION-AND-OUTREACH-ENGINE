@@ -40,7 +40,9 @@ def export_all(
 ) -> None:
     pending = pending or []
     _write_csv(output_dir / "leads.csv", [lead.workbook_row() for lead in leads], LEAD_COLUMNS)
-    evidence_fields = list(leads[0].evidence_row()) if leads else list(asdict(Lead()))
+    # Use the complete evidence schema even when no lead qualified. This keeps the
+    # pending/rejection provenance column available in zero-lead runs.
+    evidence_fields = list(leads[0].evidence_row()) if leads else list(Lead().evidence_row())
     _write_csv(
         output_dir / "evidence_ledger.csv",
         [lead.evidence_row() for lead in leads],
