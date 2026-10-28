@@ -44,6 +44,17 @@ def lead_from_row(row: dict) -> Lead:
     return Lead(**values)
 
 
+def source_rows(directory: Path, name: str) -> list[dict]:
+    """Prefer structured pending records so nested evidence survives source assembly."""
+    if name == "review_queue.csv":
+        structured = directory / "review_queue.json"
+        if structured.exists():
+            payload = read_optional_json(structured)
+            if isinstance(payload, list) and all(isinstance(row, dict) for row in payload):
+                return payload
+    return read_rows(directory / name)
+
+
 def artifact_hashes(directory: Path) -> dict:
     return {
         str(path.relative_to(directory)).replace("\\", "/"): hashlib.sha256(
@@ -206,7 +217,7 @@ def assemble(root: Path, source_dirs: list[Path]) -> dict:
             }
         )
         for name in ("evidence_ledger.csv", "rejections.csv", "review_queue.csv"):
-            for row in read_rows(source / name):
+            for row in source_rows(source, name):
                 lead = lead_from_row(row)
                 if lead.stable_creator_id:
                     records[lead.stable_creator_id] = lead
