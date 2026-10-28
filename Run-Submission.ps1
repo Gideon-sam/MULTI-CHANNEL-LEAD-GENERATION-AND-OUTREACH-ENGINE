@@ -6,6 +6,23 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
+$localEnvPath = Join-Path $PSScriptRoot '.env'
+if (Test-Path -LiteralPath $localEnvPath) {
+    foreach ($rawLine in Get-Content -LiteralPath $localEnvPath) {
+        $line = $rawLine.Trim()
+        if (-not $line -or $line.StartsWith('#')) { continue }
+        $separator = $line.IndexOf('=')
+        if ($separator -lt 1) { throw 'Invalid .env line: expected NAME=VALUE.' }
+        $name = $line.Substring(0, $separator).Trim()
+        $value = $line.Substring($separator + 1).Trim()
+        if ($name -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') {
+            throw 'Invalid .env variable name.'
+        }
+        if ($value -and -not [Environment]::GetEnvironmentVariable($name, 'Process')) {
+            [Environment]::SetEnvironmentVariable($name, $value, 'Process')
+        }
+    }
+}
 $projectPython = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $projectPython)) {
     & python -m venv .venv
