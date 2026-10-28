@@ -133,6 +133,18 @@ class YouTubeApi:
     async def __aexit__(self, *_: object) -> None:
         await self.client.aclose()
 
+    @staticmethod
+    def _read_cached_json(path: str) -> dict:
+        with open(path, encoding="utf-8") as handle:
+            return json.load(handle)
+
+    @staticmethod
+    def _write_cached_json(path: str, payload: dict) -> None:
+        temporary = path + ".tmp"
+        with open(temporary, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
+        os.replace(temporary, path)
+
     async def get(self, resource: str, params: dict[str, object], *, cost: int = 1) -> dict:
         cache_path = ""
         if self.cache_dir:
@@ -144,8 +156,7 @@ class YouTubeApi:
                 age = time.time() - os.path.getmtime(cache_path)
                 if 0 <= age <= self.max_age_seconds:
                     try:
-                        with open(cache_path, encoding="utf-8") as handle:
-                            payload = json.load(handle)
+                        payload = await asyncio.to_thread(self._read_cached_json, cache_path)
                         self.cache_hits += 1
                         return payload
                     except (OSError, ValueError, TypeError):
@@ -169,10 +180,7 @@ class YouTubeApi:
         self.requests += 1
         self.estimated_quota_units += cost
         if cache_path:
-            temporary = cache_path + ".tmp"
-            with open(temporary, "w", encoding="utf-8") as handle:
-                json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
-            os.replace(temporary, cache_path)
+            await asyncio.to_thread(self._write_cached_json, cache_path, payload)
         return payload
 
 
@@ -279,7 +287,9 @@ async def discover_channels(config: Config, api: YouTubeApi) -> list[YouTubeCand
     queries: list[tuple[str, str]] = []
     modifiers = ("coach", "consultant", "educator", "creator", "podcast host")
     for index, term in enumerate(config.search_terms):
-        if re.search(r"\b(coach|consultant|creator|podcast|educator|author|speaker)\b", term, re.I):
+        if re.search(
+            r"\b(coach|consultant|creator|podcast|educator|author|speaker)\b", term, re.IGNORECASE
+        ):
             query = term
         else:
             query = f"{term} {modifiers[index % len(modifiers)]}"
