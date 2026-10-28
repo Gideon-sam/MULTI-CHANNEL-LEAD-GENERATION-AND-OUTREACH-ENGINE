@@ -23,6 +23,20 @@ if (Test-Path -LiteralPath $localEnvPath) {
         }
     }
 }
+$credentialNames = @(
+    'YOUTUBE_API_KEY',
+    'TAVILY_API_KEY',
+    'PODCAST_INDEX_API_KEY',
+    'PODCAST_INDEX_API_SECRET'
+)
+foreach ($name in $credentialNames) {
+    if (-not [Environment]::GetEnvironmentVariable($name, 'Process')) {
+        $userValue = [Environment]::GetEnvironmentVariable($name, 'User')
+        if ($userValue) {
+            [Environment]::SetEnvironmentVariable($name, $userValue, 'Process')
+        }
+    }
+}
 $projectPython = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $projectPython)) {
     & python -m venv .venv
