@@ -17,6 +17,7 @@ def main() -> None:
     top_files = [
         "README.md",
         "START_HERE.md",
+        "REVIEW_3000.md",
         "Run-Project.ps1",
         "Run-Submission.ps1",
         "pyproject.toml",
