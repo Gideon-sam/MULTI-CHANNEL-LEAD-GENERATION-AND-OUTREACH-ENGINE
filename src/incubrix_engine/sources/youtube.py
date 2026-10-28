@@ -6,8 +6,9 @@ import json
 import os
 import re
 import time
+from collections import Counter
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from typing import Self
 from urllib.parse import urlparse
 
@@ -121,6 +122,8 @@ class YouTubeApi:
         self.requests = 0
         self.cache_hits = 0
         self.estimated_quota_units = 0
+        self.network_attempts: Counter[str] = Counter()
+        self.response_provenance: dict[tuple[str, str, str], dict] = {}
         self.cache_dir = os.fspath(cache_dir) if cache_dir is not None else ""
         self.max_age_seconds = max_age_hours * 3600
         self.refresh = refresh
@@ -158,10 +161,14 @@ class YouTubeApi:
                     try:
                         payload = await asyncio.to_thread(self._read_cached_json, cache_path)
                         self.cache_hits += 1
+                        self.record_provenance(
+                            resource, params, payload, os.path.getmtime(cache_path), True
+                        )
                         return payload
                     except (OSError, ValueError, TypeError):
                         pass
         try:
+            self.network_attempts[resource] += 1
             response = await self.client.get(f"/{resource}", params=params)
             response.raise_for_status()
             payload = response.json()
@@ -179,9 +186,31 @@ class YouTubeApi:
             ) from None
         self.requests += 1
         self.estimated_quota_units += cost
+        self.record_provenance(resource, params, payload, time.time(), False)
         if cache_path:
             await asyncio.to_thread(self._write_cached_json, cache_path, payload)
         return payload
+
+    def record_provenance(
+        self, resource: str, params: dict, payload: dict, fetched_at: float, cached: bool
+    ) -> None:
+        for item in payload.get("items", []):
+            identity = item.get("id")
+            if not isinstance(identity, str):
+                continue
+            self.response_provenance[resource, identity, str(params.get("part", ""))] = {
+                "retrieved_at": datetime.fromtimestamp(fetched_at, UTC).isoformat(),
+                "sha256": hashlib.sha256(
+                    json.dumps(item, sort_keys=True, ensure_ascii=False).encode()
+                ).hexdigest(),
+                "source": f"YouTube Data API {resource}.list",
+                "parts": params.get("part", ""),
+                "from_cache": cached,
+                "public_item_id": identity,
+            }
+
+    def snapshot(self, resource: str, identity: str, part: str) -> dict:
+        return dict(self.response_provenance.get((resource, identity, part), {}))
 
 
 def _chunks(values: list[str], size: int = 50) -> list[list[str]]:
