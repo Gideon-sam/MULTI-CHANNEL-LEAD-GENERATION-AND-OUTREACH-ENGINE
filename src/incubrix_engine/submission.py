@@ -25,6 +25,9 @@ from .models import Lead
 from .operations import run_demo
 from .outreach import write_outreach
 from .pipeline import _dedupe_leads, _select_final, run_pipeline
+from .sources.podcast_index import PodcastIndexApi
+from .sources.podcast_index import credentials_from_environment as podcast_index_credentials
+from .sources.podcast_index import discover as discover_podcast_index
 from .validation import validate
 from .workbook import build_workbook
 from .workbook_support import read_optional_json, supplement_workbook
@@ -220,7 +223,13 @@ def assemble(root: Path, source_dirs: list[Path]) -> dict:
                 discoveries[stable] = {
                     **row,
                     "stable_creator_id": stable,
-                    "source_platform": "YouTube" if channel_id else "Apple Podcasts",
+                    "source_platform": (
+                        "YouTube"
+                        if channel_id
+                        else "Podcast Index + publisher RSS"
+                        if row.get("discovery_provider") == "Podcast Index API"
+                        else "Apple Podcasts + publisher RSS"
+                    ),
                     "source_run": str(source.relative_to(root)),
                     "data_status": "Discovery only; not qualification evidence",
                 }
@@ -319,8 +328,16 @@ def assemble(root: Path, source_dirs: list[Path]) -> dict:
 async def production(root: Path, sources: str) -> dict:
     config = replace(Config.load(root / "config/production.json"), sender_name="[YOUR NAME]")
     wanted = ["apple", "youtube"] if sources == "both" else [sources]
+    if sources == "all":
+        wanted = ["apple", "podcastindex", "youtube"]
     if sources == "auto":
-        wanted = ["apple", "youtube"] if os.environ.get("YOUTUBE_API_KEY") else ["apple"]
+        wanted = ["apple"]
+        if os.environ.get("PODCAST_INDEX_API_KEY") and os.environ.get(
+            "PODCAST_INDEX_API_SECRET"
+        ):
+            wanted.append("podcastindex")
+        if os.environ.get("YOUTUBE_API_KEY"):
+            wanted.append("youtube")
     source_dirs = []
     failures = []
     for source in wanted:
@@ -333,6 +350,41 @@ async def production(root: Path, sources: str) -> dict:
         try:
             if source == "youtube":
                 await run_youtube_pipeline(root, run_config, logger)
+            elif source == "podcastindex":
+                key, secret = podcast_index_credentials()
+                async with PodcastIndexApi(
+                    key,
+                    secret,
+                    root / ".cache/podcast_index",
+                    config.cache_max_age_hours,
+                ) as api:
+                    candidates = await discover_podcast_index(config, api)
+                    input_file = root / ".cache/podcast_index/candidates.csv"
+                    _write_csv(
+                        input_file,
+                        [asdict(candidate) for candidate in candidates],
+                        list(candidates[0].__dataclass_fields__) if candidates else [
+                            "apple_id",
+                            "artist_name",
+                            "collection_name",
+                            "country_iso2",
+                            "feed_url",
+                            "apple_url",
+                            "genre",
+                            "release_date",
+                            "discovery_provider",
+                        ],
+                    )
+                    await run_pipeline(root, run_config, logger, input_path=input_file)
+                    manifest_path = root / run_config.output_dir / "manifest.json"
+                    manifest = read_optional_json(manifest_path)
+                    manifest["source"] = "Podcast Index discovery and publisher RSS"
+                    manifest["podcast_index_api"] = {
+                        "successful_requests": api.requests,
+                        "cache_hits": api.cache_hits,
+                        "actual_billed_cost": None,
+                    }
+                    write_text(manifest_path, json.dumps(manifest, indent=2))
             else:
                 await run_pipeline(
                     root,
@@ -369,7 +421,11 @@ async def production(root: Path, sources: str) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("mode", choices=("production", "assemble", "support", "smoke"))
-    parser.add_argument("--sources", choices=("auto", "both", "apple", "youtube"), default="auto")
+    parser.add_argument(
+        "--sources",
+        choices=("auto", "all", "both", "apple", "podcastindex", "youtube"),
+        default="auto",
+    )
     parser.add_argument("--source-dir", type=Path, action="append")
     parser.add_argument("--output", type=Path, default=Path("output"))
     args = parser.parse_args()

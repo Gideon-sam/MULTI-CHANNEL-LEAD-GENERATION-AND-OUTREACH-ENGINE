@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import csv
-from dataclasses import fields
+from dataclasses import MISSING, fields
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -10,7 +10,11 @@ from .models import PodcastCandidate
 
 def load_candidates(path: Path) -> list[PodcastCandidate]:
     """Import reviewer-supplied new inputs without inventing any platform identifier."""
-    required = {field.name for field in fields(PodcastCandidate)} - {"release_date", "country_iso2"}
+    required = {
+        field.name
+        for field in fields(PodcastCandidate)
+        if field.default is MISSING and field.name != "country_iso2"
+    }
     with path.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         missing = required - set(reader.fieldnames or [])

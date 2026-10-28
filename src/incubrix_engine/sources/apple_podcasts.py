@@ -628,6 +628,7 @@ async def enrich(
     refresh: bool = False,
     parse_executor: Executor | None = None,
 ) -> EnrichmentResult:
+    podcast_index = candidate.discovery_provider == "Podcast Index API"
     lead = Lead(
         creator_name=candidate.artist_name,
         country_iso2=candidate.country_iso2,
@@ -635,9 +636,21 @@ async def enrich(
         stable_creator_id=f"apple-podcast:{candidate.apple_id}",
         checked_date=config.checked_date,
         source_feed_url=candidate.feed_url,
-        source_api_url=f"https://itunes.apple.com/lookup?id={candidate.apple_id}&entity=podcast",
-        source_license="Public Apple metadata and publisher RSS; no media redistribution licence implied",
-        metadata={"collection_name": candidate.collection_name, "genre": candidate.genre},
+        source_api_url=(
+            f"https://api.podcastindex.org/api/1.0/podcasts/byitunesid?id={candidate.apple_id}"
+            if podcast_index
+            else f"https://itunes.apple.com/lookup?id={candidate.apple_id}&entity=podcast"
+        ),
+        source_license=(
+            "Public Podcast Index metadata and publisher RSS; no media redistribution licence implied"
+            if podcast_index
+            else "Public Apple metadata and publisher RSS; no media redistribution licence implied"
+        ),
+        metadata={
+            "collection_name": candidate.collection_name,
+            "genre": candidate.genre,
+            "discovery_provider": candidate.discovery_provider,
+        },
     )
     try:
         response = await http.get(candidate.feed_url, refresh=refresh)

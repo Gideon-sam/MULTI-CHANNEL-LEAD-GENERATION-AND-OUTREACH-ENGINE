@@ -36,6 +36,8 @@ class Config:
     review_file: str = "config/reviews.json"
     youtube_max_search_calls: int = 70
     youtube_result_limit: int = 50
+    podcast_index_max_search_calls: int = 40
+    podcast_index_result_limit: int = 100
 
     @classmethod
     def load(cls, path: str | Path) -> Config:
@@ -69,6 +71,8 @@ class Config:
             "cache_max_age_hours",
             "youtube_max_search_calls",
             "youtube_result_limit",
+            "podcast_index_max_search_calls",
+            "podcast_index_result_limit",
         ):
             value = getattr(config, name)
             if type(value) is not int or value <= 0:
@@ -77,6 +81,8 @@ class Config:
             raise ValueError("itunes_result_limit must be between 1 and 200")
         if not 1 <= config.youtube_result_limit <= 50:
             raise ValueError("youtube_result_limit must be between 1 and 50")
+        if not 1 <= config.podcast_index_result_limit <= 200:
+            raise ValueError("podcast_index_result_limit must be between 1 and 200")
         if not 0 < config.max_country_share <= 0.6:
             raise ValueError("max_country_share must be >0 and <=0.6")
         if len(set(config.approved_countries)) < 3:

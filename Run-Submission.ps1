@@ -1,7 +1,7 @@
 param(
     [ValidateSet('production', 'smoke', 'assemble', 'support')]
     [string]$Mode = 'production',
-    [ValidateSet('auto', 'both', 'apple', 'youtube')]
+    [ValidateSet('auto', 'all', 'both', 'apple', 'podcastindex', 'youtube')]
     [string]$Sources = 'auto'
 )
 $ErrorActionPreference = 'Stop'

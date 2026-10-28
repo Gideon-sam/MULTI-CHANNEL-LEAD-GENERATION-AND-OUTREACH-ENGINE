@@ -48,6 +48,7 @@ class PodcastCandidate:
     apple_url: str
     genre: str
     release_date: str = ""
+    discovery_provider: str = "Apple Search API"
 
 
 @dataclass
@@ -108,6 +109,8 @@ class Lead:
         if self.stable_creator_id.startswith("youtube-channel:"):
             return "YouTube Data API"
         if self.stable_creator_id.startswith("apple-podcast:"):
+            if self.metadata.get("discovery_provider") == "Podcast Index API":
+                return "Podcast Index + publisher RSS"
             return "Apple Podcasts + publisher RSS"
         return str(self.metadata.get("source_system", "Unknown"))
 
