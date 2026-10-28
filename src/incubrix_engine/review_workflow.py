@@ -60,7 +60,7 @@ def export_review_workbook(queue_path: Path, destination: Path) -> dict:
     instructions.title = "START_HERE"
     for text in [
         "HUMAN REVIEW REQUIRED - these are research candidates, not qualified leads.",
-        "Aim: 2,000 unique approved creators; three countries; maximum 60% in one country.",
+        "Aim: approve only evidence-complete creators; three countries; maximum 60% in one country.",
         "Candidates contains automated findings and links. Treat country/contact as hints.",
         "Reviews contains one row per candidate. Verify and correct the prefilled values.",
         "Enter a canonical creator identity (e.g. official website) shared across their shows.",
