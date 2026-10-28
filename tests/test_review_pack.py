@@ -38,6 +38,7 @@ def test_review_pack_keeps_real_status_and_candidate_verdicts_blank(tmp_path):
             "03_FETCHED_EVIDENCE",
             "04_REJECTIONS",
             "05_MANUAL_TODOS",
+            "06_LINK_HEALTH",
         ]
         assert book["00_OVERVIEW"]["B6"].value == 1
         assert book["02_AUDIT_40"]["N5"].value is None

@@ -258,6 +258,36 @@ def _manual(book: Workbook, directory: Path) -> None:
         sheet.cell(row, 3).fill = PatternFill("solid", fgColor=AMBER)
 
 
+def _link_health(book: Workbook, directory: Path) -> None:
+    headers = [
+        "status",
+        "http_status",
+        "url",
+        "resolved_url",
+        "lead_ids",
+        "checked_at",
+        "detail",
+        "my_manual_verdict",
+        "my_evidence_path",
+    ]
+    rows = read_rows(directory / "link_checks.csv")
+    rows.sort(
+        key=lambda row: (row.get("status") == "http_ok", row.get("status", ""), row.get("url", ""))
+    )
+    sheet = book.create_sheet("06_LINK_HEALTH")
+    _title(
+        sheet,
+        "Live link-health results",
+        "HTTP success is technical availability; blocked, stale and missing links need manual resolution",
+    )
+    _table(sheet, headers, [[row.get(key, "") for key in headers] for row in rows])
+    status_column = headers.index("status") + 1
+    for row in range(5, 5 + len(rows)):
+        value = sheet.cell(row, status_column).value
+        color = GREEN if value == "http_ok" else RED if value == "not_found" else AMBER
+        sheet.cell(row, status_column).fill = PatternFill("solid", fgColor=color)
+
+
 def build(directory: Path, destination: Path) -> None:
     status = _json(directory / "submission_status.json")
     sample_name = status.get("audit_sample", "")
@@ -271,6 +301,7 @@ def build(directory: Path, destination: Path) -> None:
         _evidence(book, directory)
         _rejections(book, directory)
         _manual(book, directory)
+        _link_health(book, directory)
         book.properties.title = "IncuBrix reviewer pack"
         book.properties.subject = "Measured leads, audit, evidence and manual TODOs"
         with atomic_destination(destination) as temporary:
