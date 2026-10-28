@@ -1,0 +1,26 @@
+.env
+.venv/
+.venv_verify/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+.cache/
+logs/*.jsonl
+state/*.sqlite3*
+state_preflight/
+state_additional/
+seed_private/
+config/*.local.json
+config/*.json.bak
+src/*.egg-info/
+
+# Generated deliverables and private research stay local; the packaging script includes them.
+output/
+output_preflight/
+output_additional/
+dist/
+outreach/priority_a/
+verification/state/
+verification/*_inputs.csv
+

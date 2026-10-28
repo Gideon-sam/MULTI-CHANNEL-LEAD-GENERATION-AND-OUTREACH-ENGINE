@@ -1,0 +1,5 @@
+{
+  "email": {"sender": "", "recipient": "", "ownership_confirmed": false},
+  "linkedin": {"sender": "", "recipient": "", "ownership_confirmed": false},
+  "instagram": {"sender": "", "recipient": "", "ownership_confirmed": false}
+}

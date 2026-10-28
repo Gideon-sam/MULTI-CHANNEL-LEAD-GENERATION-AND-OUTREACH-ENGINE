@@ -1,0 +1,11 @@
+.git
+.venv*
+.cache
+state*
+seed_private
+config/*.local.json
+output*
+logs
+__pycache__
+.pytest_cache
+.ruff_cache
