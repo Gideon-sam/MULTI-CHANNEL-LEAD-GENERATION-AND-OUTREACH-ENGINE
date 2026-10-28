@@ -18,8 +18,9 @@ def supplement_workbook(source: Path, destination: Path, evidence: dict) -> None
         start["B6"] = "[YOUR NAME]"
         start["B16"] = (
             "Used: OpenAI Codex (code, tests, research assistance, documentation and draft copy); "
-            "Apple Search API and publisher RSS; YouTube Data API and public YouTube channel feeds; "
-            "Google developer documentation; IncuBrix public website; Python, httpx, feedparser, "
+            "Apple Search API, Podcast Index API and publisher RSS; YouTube Data API and public "
+            "YouTube channel feeds; Tavily basic web search for evidence hints only; Google "
+            "developer documentation; IncuBrix public website; Python, httpx, feedparser, "
             "Beautiful Soup, langdetect, openpyxl, SQLite, pytest, Ruff and Git. "
             "Gemini: NOT USED. No Gemini key or measured Gemini result. "
             "Legacy public research also cited HubSpot and Microsoft documentation. "

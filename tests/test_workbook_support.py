@@ -18,6 +18,8 @@ def test_supplement_preserves_template_and_leaves_unmeasured_claims_blank(tmp_pa
         assert book["04_SELF_CHECK"]["C11"].value is None
         assert book["00_START"]["B17"].value is None
         assert "Gemini: NOT USED" in book["00_START"]["B16"].value
+        assert "Podcast Index API" in book["00_START"]["B16"].value
+        assert "Tavily" in book["00_START"]["B16"].value
         assert book["02_LEADS"]["AC5"].data_type == "f"
         assert "05_EVIDENCE_INDEX" in book.sheetnames
     finally:
