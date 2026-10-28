@@ -28,6 +28,7 @@ from .pipeline import _dedupe_leads, _select_final, run_pipeline
 from .sources.podcast_index import PodcastIndexApi
 from .sources.podcast_index import credentials_from_environment as podcast_index_credentials
 from .sources.podcast_index import discover as discover_podcast_index
+from .sources.tavily import TavilyApi, api_key_from_environment, evidence_hints
 from .validation import validate
 from .workbook import build_workbook
 from .workbook_support import read_optional_json, supplement_workbook
@@ -404,6 +405,33 @@ async def production(root: Path, sources: str) -> dict:
             "No source run completed; inspect logs. Existing final exports were preserved."
         )
     result = assemble(root, source_dirs)
+    if api_key_from_environment():
+        directory = root / result["output_directory"]
+        pending = [lead_from_row(row) for row in read_rows(directory / "review_queue.csv")]
+        async with TavilyApi(
+            api_key_from_environment(),
+            root / ".cache/tavily",
+            config.cache_max_age_hours,
+        ) as tavily:
+            hints = await evidence_hints(pending, tavily, config.tavily_evidence_query_limit)
+            write_text(
+                directory / "web_evidence_hints.json",
+                json.dumps(hints, ensure_ascii=False, indent=2),
+            )
+            write_text(
+                directory / "tavily_api_report.json",
+                json.dumps(
+                    {
+                        "successful_requests": tavily.requests,
+                        "cache_hits": tavily.cache_hits,
+                        "provider_reported_credits_used": tavily.credits_used,
+                        "qualification_changes": 0,
+                        "note": "Search results are discovery hints, not evidence. Fetch and verify the cited public page before recording a proof.",
+                    },
+                    indent=2,
+                ),
+            )
+        result = support(root, directory)
     write_text(
         root / "output/source_run_failures.json",
         json.dumps(

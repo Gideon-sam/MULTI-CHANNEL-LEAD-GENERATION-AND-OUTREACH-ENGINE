@@ -38,6 +38,7 @@ class Config:
     youtube_result_limit: int = 50
     podcast_index_max_search_calls: int = 40
     podcast_index_result_limit: int = 100
+    tavily_evidence_query_limit: int = 100
 
     @classmethod
     def load(cls, path: str | Path) -> Config:
@@ -73,6 +74,7 @@ class Config:
             "youtube_result_limit",
             "podcast_index_max_search_calls",
             "podcast_index_result_limit",
+            "tavily_evidence_query_limit",
         ):
             value = getattr(config, name)
             if type(value) is not int or value <= 0:

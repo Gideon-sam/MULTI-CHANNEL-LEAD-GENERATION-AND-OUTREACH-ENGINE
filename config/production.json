@@ -42,6 +42,7 @@
   "youtube_result_limit": 50,
   "podcast_index_max_search_calls": 40,
   "podcast_index_result_limit": 100,
+  "tavily_evidence_query_limit": 100,
   "workbook_template": "assets/IncuBrix_Submission_Workbook_Template.xlsx",
   "output_dir": "output",
   "state_dir": "state",
