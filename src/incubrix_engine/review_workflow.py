@@ -167,7 +167,13 @@ def export_review_workbook(queue_path: Path, destination: Path) -> dict:
         auto_draft = meta.get("auto_review_draft", {})
         if isinstance(auto_draft, dict):
             for key, value in auto_draft.items():
-                if key in REVIEW_COLUMNS and key not in {"decision", "stable_creator_id"}:
+                if key in REVIEW_COLUMNS and key not in {
+                    "decision",
+                    "stable_creator_id",
+                    "reviewer",
+                    "reviewed_at",
+                    "rationale",
+                }:
                     draft[key] = value
         for column, key in enumerate(REVIEW_COLUMNS, 1):
             cell = _text_cell(reviews, number, column, draft.get(key, ""))
