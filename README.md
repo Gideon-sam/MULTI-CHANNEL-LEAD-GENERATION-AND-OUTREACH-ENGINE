@@ -1,5 +1,7 @@
 # IncuBrix creator outreach evidence engine
 
+Confused by the generated files? Start with [`START_HERE.md`](START_HERE.md).
+
 ## Current supported run command
 
 From the project root on Windows with Python 3.12+ installed, run:
