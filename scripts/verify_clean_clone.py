@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
+import sys
 import tempfile
 import time
 from datetime import UTC, datetime
@@ -20,7 +22,11 @@ def main() -> None:
     log = root / "verification/clean_clone.log"
     log.parent.mkdir(exist_ok=True)
     command = [
-        "powershell",
+        shutil.which("powershell")
+        or str(
+            Path(os.environ.get("SystemRoot", "C:/Windows"))
+            / "System32/WindowsPowerShell/v1.0/powershell.exe"
+        ),
         "-NoProfile",
         "-ExecutionPolicy",
         "Bypass",
@@ -31,6 +37,10 @@ def main() -> None:
     ]
     environment = dict(os.environ)
     environment.pop("YOUTUBE_API_KEY", None)
+    # Satisfy the README prerequisite: the installed base Python must be on PATH.
+    environment["PATH"] = (
+        str(Path(sys._base_executable).parent) + os.pathsep + environment.get("PATH", "")
+    )
     started = time.perf_counter()
     with log.open("w", encoding="utf-8") as handle:
         result = subprocess.run(

@@ -26,4 +26,4 @@ if ($Mode -eq 'production' -and $Sources -eq 'auto' -and -not $env:YOUTUBE_API_K
 }
 & $projectPython -m incubrix_engine.submission $Mode --sources $Sources
 if ($LASTEXITCODE -ne 0) { throw 'Engine operation failed. Inspect its log and preserve existing outputs.' }
-Write-Host 'Operation completed. Read output/submission_status.json for acceptance; execution success does not mean submission-ready.'
+Write-Host 'Operation completed. output/CURRENT_RUN.json points to the latest complete production run. Execution success does not mean submission-ready.'

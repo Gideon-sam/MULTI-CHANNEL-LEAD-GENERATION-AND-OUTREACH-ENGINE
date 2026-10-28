@@ -193,6 +193,19 @@ def supplement_workbook(source: Path, destination: Path, evidence: dict) -> None
         sheet.column_dimensions["B"].width = 60
         sheet.column_dimensions["C"].width = 85
         sheet.freeze_panes = "A2"
+        root_prefix = str(evidence.get("root_prefix", ".."))
+        if root_prefix != "..":
+            for page in workbook:
+                for row in page.iter_rows():
+                    for cell in row:
+                        if isinstance(cell.value, str) and cell.value.startswith("../"):
+                            cell.value = root_prefix + "/" + cell.value[3:]
+                        if (
+                            cell.hyperlink
+                            and cell.hyperlink.target
+                            and cell.hyperlink.target.startswith("../")
+                        ):
+                            cell.hyperlink.target = root_prefix + "/" + cell.hyperlink.target[3:]
         with atomic_destination(destination) as temporary:
             workbook.save(temporary)
     finally:

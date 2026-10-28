@@ -7,7 +7,6 @@ import asyncio
 import hashlib
 import json
 import os
-import shutil
 import time
 from dataclasses import asdict, fields, replace
 from datetime import UTC, datetime
@@ -81,6 +80,7 @@ def support(root: Path, directory: Path, source_metrics: list[dict] | None = Non
         "failure_demo_passed": demo.get("failure_recovery", {}).get("continued_after_failure")
         is True,
         "demo": demo,
+        "root_prefix": os.path.relpath(root, directory).replace("\\", "/"),
     }
     draft = directory / "IncuBrix_Submission_Workbook_Draft.xlsx"
     if draft.exists():
@@ -146,6 +146,7 @@ def support(root: Path, directory: Path, source_metrics: list[dict] | None = Non
             ),
         )
     status = {
+        "output_directory": str(directory.relative_to(root)).replace("\\", "/"),
         "generated_at": datetime.now(UTC).isoformat(),
         "engine_qualified_rows": len(rows),
         "pending_rows": report["pending_rows"],
@@ -182,7 +183,7 @@ def support(root: Path, directory: Path, source_metrics: list[dict] | None = Non
 def assemble(root: Path, source_dirs: list[Path]) -> dict:
     started = time.perf_counter()
     config = replace(Config.load(root / "config/production.json"), sender_name="[YOUR NAME]")
-    directory = root / config.output_dir
+    directory = root / config.output_dir / "runs" / datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
     records: dict[str, Lead] = {}
     discoveries: dict[str, dict] = {}
     measured = []
@@ -223,9 +224,6 @@ def assemble(root: Path, source_dirs: list[Path]) -> dict:
                     "source_run": str(source.relative_to(root)),
                     "data_status": "Discovery only; not qualification evidence",
                 }
-    if directory.exists():
-        backup = root / ".cache/submission_backups" / datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
-        shutil.copytree(directory, backup)
     directory.mkdir(parents=True, exist_ok=True)
     pool, removed = _dedupe_leads(
         [lead for lead in records.values() if lead.candidate_status == "Qualified"]
@@ -297,7 +295,25 @@ def assemble(root: Path, source_dirs: list[Path]) -> dict:
             indent=2,
         ),
     )
-    return support(root, directory, measured)
+    result = support(root, directory, measured)
+    write_text(
+        root / "output/CURRENT_RUN.json",
+        json.dumps(
+            {
+                "output_directory": result["output_directory"],
+                "status_file": result["output_directory"] + "/submission_status.json",
+            },
+            indent=2,
+        ),
+    )
+    relative_dashboard = (
+        str(directory.relative_to(root / "output")).replace("\\", "/") + "/audit_dashboard.html"
+    )
+    write_text(
+        root / "output/current.html",
+        f'<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url={relative_dashboard}"><a href="{relative_dashboard}">Open the latest complete production review</a>',
+    )
+    return result
 
 
 async def production(root: Path, sources: str) -> dict:
