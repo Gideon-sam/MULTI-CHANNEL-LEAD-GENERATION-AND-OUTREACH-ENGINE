@@ -52,8 +52,14 @@ if ($LASTEXITCODE -ne 0) { throw 'Installed dependencies are inconsistent.' }
 if ($LASTEXITCODE -ne 0) { throw 'Tests failed. Stopping before any engine run.' }
 & $projectPython -m ruff check src tests scripts
 if ($LASTEXITCODE -ne 0) { throw 'Lint failed. Stopping before any engine run.' }
-if ($Mode -eq 'production' -and $Sources -eq 'auto' -and -not $env:YOUTUBE_API_KEY) {
-    Write-Host 'YOUTUBE_API_KEY is not set: running Apple/RSS only. Use the process environment to enable YouTube.'
+if ($Mode -eq 'production' -and $Sources -eq 'auto') {
+    $enabled = @('Apple/publisher RSS')
+    if ($env:PODCAST_INDEX_API_KEY -and $env:PODCAST_INDEX_API_SECRET) {
+        $enabled += 'Podcast Index/publisher RSS'
+    }
+    if ($env:YOUTUBE_API_KEY) { $enabled += 'YouTube' }
+    if ($env:TAVILY_API_KEY) { $enabled += 'Tavily evidence hints' }
+    Write-Host ('Auto sources: ' + ($enabled -join ', '))
 }
 & $projectPython -m incubrix_engine.submission $Mode --sources $Sources
 if ($LASTEXITCODE -ne 0) { throw 'Engine operation failed. Inspect its log and preserve existing outputs.' }
