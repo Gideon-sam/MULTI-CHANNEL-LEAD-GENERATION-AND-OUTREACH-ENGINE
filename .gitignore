@@ -25,7 +25,7 @@ verification/state/
 verification/*_inputs.csv
 output_*/
 state_*/
-verification/current/
-verification/clean_clone.log
+verification/*
+!verification/clean_clone_report.json
 inputs/api.txt
 
