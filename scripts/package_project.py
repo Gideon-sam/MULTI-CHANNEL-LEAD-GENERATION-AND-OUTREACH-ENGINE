@@ -16,7 +16,9 @@ def main() -> None:
     archive_path = destination / f"IncuBrix_Project_Draft_{datetime.now(UTC):%Y%m%dT%H%M%SZ}.zip"
     top_files = [
         "README.md",
+        "START_HERE.md",
         "Run-Project.ps1",
+        "Run-Submission.ps1",
         "pyproject.toml",
         "requirements.lock",
         "Dockerfile",
@@ -33,12 +35,19 @@ def main() -> None:
         "assets",
         ".github",
         "inputs",
-        "output",
         "verification",
     ]
     paths = [root / name for name in top_files]
     for name in folders:
         paths.extend((root / name).rglob("*"))
+    current_pointer = root / "output/CURRENT_RUN.json"
+    paths.extend((current_pointer, root / "output/current.html"))
+    if current_pointer.exists():
+        pointer = json.loads(current_pointer.read_text(encoding="utf-8"))
+        current_run = (root / str(pointer.get("output_directory", ""))).resolve()
+        if not current_run.is_relative_to((root / "output/runs").resolve()):
+            raise ValueError("CURRENT_RUN output directory must be inside output/runs")
+        paths.extend(current_run.rglob("*"))
     manifest = {}
     with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(set(paths)):
