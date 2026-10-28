@@ -23,4 +23,8 @@ dist/
 outreach/priority_a/
 verification/state/
 verification/*_inputs.csv
+output_*/
+state_*/
+verification/current/
+inputs/api.txt
 

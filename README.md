@@ -1,5 +1,19 @@
 # IncuBrix creator outreach evidence engine
 
+## Current supported run command
+
+From the project root on Windows with Python 3.12+ installed, run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\Run-Submission.ps1
+```
+
+This installs the locked dependencies when needed, runs the full tests and lint, executes available production sources, combines their results with the existing qualification rules, and generates audit/outreach/workbook support. Set `YOUTUBE_API_KEY` in the process environment to enable YouTube; never put it in a file. Without it, the command explicitly reports Apple/RSS-only operation. A finished operation does not mean the submission gates pass: read `output/submission_status.json`.
+
+For a quick clean-clone demonstration, use the same command with `-Mode smoke`. This checks four real records, repeats them, refreshes six, and demonstrates one injected HTTP 404 with continued processing. It is a small execution test, not a production acceptance or scale claim. Evidence is under `verification/current/`. `scripts/verify_clean_clone.py` performs that documented command in a new temporary Git clone and saves its measured result.
+
+The current review workbook is `output/IncuBrix_Submission_Workbook_Review.xlsx`. `output/all_discovered_inputs.csv` labels both discovery sources; discovery rows are not verified leads. The random sample filename is recorded in `submission_status.json`. See [audit and demo commands](docs/audit-and-demo-guide.md), [candidate checklist](docs/candidate-checklist.md), [seed screenshots](docs/seed-evidence-checklist.md), and [tools/disclosure](docs/tools-and-disclosure.md). `output_youtube_smoke/` and `previous_priority_a/` are historical results, not the current production submission. Existing source-only commands below remain available for diagnosis.
+
 An executable Option 1 assessment project: public podcast discovery, activity checks, evidence review, deduplication, country balancing, outreach drafts, a local audit desk, the official workbook, and an owned-account seed scheduler/tracker.
 
 **Status: implementation and real research artifacts; not a completed submission.** Consult `output/validation_report.json` and `output/manifest.json` for actual counts. Discovery records are not verified leads. The brief requires 1,000 fully qualified creators (5,000 for exceptional), 25 Priority A sequences, product use, real three-channel seed evidence and two unedited videos. Missing evidence is never filled with invented details.
@@ -34,7 +48,7 @@ python -m venv .venv
 
 On Linux/macOS use `.venv/bin/python` in place of `.venv\Scripts\python.exe`. Activate the environment if using the shorter `python` commands below.
 
-## One normal run command
+## Legacy Apple/RSS-only run command
 
 ```powershell
 python -m incubrix_engine run --config config/production.json --input inputs/cached_discovery_expanded.csv

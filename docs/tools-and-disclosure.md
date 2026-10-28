@@ -1,0 +1,11 @@
+# Tools, sources and disclosure
+
+Used: OpenAI Codex for implementation, research assistance, tests, draft copy, documentation and evidence-tool support; Python, httpx, feedparser, Beautiful Soup, langdetect, openpyxl, SQLite, pytest, Ruff, PowerShell and Git. The public sources are Apple Search API, publisher RSS and linked official sites, YouTube Data API, public channel metadata and the IncuBrix public site. Legacy product/launch research also referenced HubSpot and Microsoft public documentation. Gemini was not used; no Gemini-generated result or spend is claimed.
+
+The original YouTube feed run produced many retrieval failures. The added uploads ingestion follows Google's documented channels.contentDetails.relatedPlaylists.uploads -> playlistItems.list -> videos.list path. It checks video ownership, public status, publication time and duration. Failed API retrieval is unknown activity; it does not establish inactivity. Sources: https://developers.google.com/youtube/data/reference/rest/v3/playlistItems/list and https://developers.google.com/youtube/data/reference/rest/v3/videos .
+
+API counts and runtime are measured locally. Actual billing, remaining provider quota and cost per verified lead are unset without console evidence. Old runs contain a historical estimated quota field; it is excluded from the current cost report. Current Google documentation describes separate search quotas, so do not interpret the old estimate as current quota usage: https://developers.google.com/youtube/data/getting-started .
+
+All qualification rules remain the existing rules; the YouTube path uses metadata heuristics that still require human review of business purpose, activity, creator identity and location. A source URL, keyword or email-shaped string alone is not semantic verification. Exact source provenance and missing review proofs are exposed in the ledger and evidence_gaps.csv. The candidate must be able to explain these limitations.
+
+Manual work still required: product testing, five observations, three opportunities, independent audit verdicts, missing creator-specific evidence, native-platform seed testing, two videos, declaration and sharing. Manual time is unmeasured. No real creators were contacted. Test fixtures are synthetic and are never inserted into production lead exports.
