@@ -1,5 +1,20 @@
 # 3,000-lead evidence review
 
+## Qualification correction on 29 October
+
+An uncertain podcast author/show name no longer causes immediate rejection. The engine
+continues to the official website and retains the creator-identity review flag. This fixes
+premature filtering; it does not approve publications, agencies or generic brands. Two
+regression cases verify that both a show name and a publication remain pending without
+creator-specific approval. The original activity rule remains 8 items in 30 days OR 2
+long-form items in 60 days. Optional subscriber counts do not block qualification.
+
+`output_reviewed_3000/leads.csv` contains the separate, newly source-rechecked review output.
+Its reviews disclose AI assistance in `config/reviews.json`; they do not represent your
+independent audit. Do not combine counts from historical outputs without deduplication and
+fresh evidence checks. The older current-run dashboard has not been promoted to a new
+submission merely because research has increased.
+
 ## Latest automated evidence pass
 
 The full 3,590-candidate source recheck saves its results under:

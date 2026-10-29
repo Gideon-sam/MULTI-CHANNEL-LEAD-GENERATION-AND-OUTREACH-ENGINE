@@ -37,6 +37,7 @@ def main() -> None:
         ".github",
         "inputs",
         "verification",
+        "output_reviewed_3000",
     ]
     paths = [root / name for name in top_files]
     for name in folders:
