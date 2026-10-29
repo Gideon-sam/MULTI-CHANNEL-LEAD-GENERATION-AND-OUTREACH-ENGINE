@@ -41,6 +41,9 @@ source-specific artifacts. Do not submit them as the current result.
 - Record the two unedited videos.
 - Complete the declaration and reviewer-access items.
 
-The requested target is 2,000 approved creators. A discovery or review candidate does not count.
+The requested target is 3,000 approved creators. A discovery or review candidate does not count.
 Use the real count in `submission_status.json`; never rename a queue to `leads.csv` or fill missing
 evidence with assumptions.
+
+For the latest bulk research workbook and progress, open [REVIEW_3000.md](REVIEW_3000.md).
+The seed account configuration is local; see [the owned-account seed handoff](docs/owned-seed-handoff.md).

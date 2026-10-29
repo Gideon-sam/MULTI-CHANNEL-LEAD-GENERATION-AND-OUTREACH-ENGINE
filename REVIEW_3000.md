@@ -1,5 +1,43 @@
 # 3,000-lead evidence review
 
+## Latest automated evidence pass
+
+The full 3,590-candidate source recheck saves its results under:
+
+`output/runs/20261028T181110372830Z/auto_enriched_20261029/`
+
+While it runs, `progress.json` shows the real completed count. After completion, open
+`Master_Auto_Enriched.xlsx`. It adds extracted source excerpts, fetch dates, source hashes,
+contact-route hints and a coverage sheet to the earlier master. The old master is preserved.
+
+The workbook's `Coverage` sheet lists missing proofs; `Evidence` holds the exact source snippets;
+`Link Checks` records fetched and unavailable URLs. All `Reviews` decisions start at `Pending`.
+An extracted excerpt still needs checking for creator ownership and meaning. A feed-owner email
+or an episode's publishing date does not by itself prove an active business contact.
+
+The final `coverage_report.json` states the achieved coverage and verified additions. The
+`integrity/report.json` report, when present, gives the independent source-byte checks. Empty
+facts and manual verdicts remain unset. This folder must not be submitted as 3,000 verified leads.
+
+To resume an interrupted run from its saved creator checkpoints, from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m incubrix_engine.bulk_evidence --input output/runs/20261028T181110372830Z/expanded_review_3000/expanded_input.csv --config config/review_recheck_3000.json --out output/runs/20261028T181110372830Z/auto_enriched_20261029 --refresh --resume
+```
+
+Resume requires the same input/configuration and checked date. A completed workbook is protected
+from overwriting. For a fresh run on a later day, choose a new output directory and omit `--resume`.
+
+For the enriched workbook, import with:
+
+```powershell
+.\.venv\Scripts\python.exe -m incubrix_engine review import --workbook output/runs/20261028T181110372830Z/auto_enriched_20261029/Master_Auto_Enriched.xlsx --queue output/runs/20261028T181110372830Z/auto_enriched_20261029/auto_enriched_queue.json --reviews config/reviews.json
+```
+
+Then use the reviewed-only recheck command below. The full source gates run again.
+
+## Earlier review workbook
+
 The current expansion contains **3,590 unique podcast candidates**. None were silently promoted:
 every row remains unqualified until its evidence is manually approved and re-fetched by the
 engine. The eight batch workbooks are optional; the master workbook contains the same rows.

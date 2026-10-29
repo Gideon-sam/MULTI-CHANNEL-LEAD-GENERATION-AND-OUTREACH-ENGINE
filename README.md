@@ -22,7 +22,7 @@ An executable Option 1 assessment project: public podcast discovery, activity ch
 
 **Status: implementation and real research artifacts; not a completed submission.** Consult `output/validation_report.json` and `output/manifest.json` for actual counts. Discovery records are not verified leads. The brief requires 1,000 fully qualified creators (5,000 for exceptional), 25 Priority A sequences, product use, real three-channel seed evidence and two unedited videos. Missing evidence is never filled with invented details.
 
-**Your requested target is 2,000 approved creators.** Production enforces that target. Start with [the human review guide](docs/human-review-guide.md) and `output/Human_Review.xlsx`. Importing decisions triggers source checks before official lead export.
+**Your requested target is 3,000 approved creators.** Production enforces that target. See [the current research and review guide](REVIEW_3000.md) for the enriched workbook and measured coverage. Importing decisions triggers source checks before official lead export.
 
 Windows shortcuts (run from this folder):
 
