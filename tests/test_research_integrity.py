@@ -2,7 +2,28 @@ import gzip
 import hashlib
 import json
 
-from incubrix_engine.research_integrity import check_source
+from incubrix_engine.research_integrity import check_source, restore_exported_snippets
+
+
+def test_excel_escape_is_restored_only_when_original_checkpoint_matches(tmp_path):
+    records = tmp_path / "records"
+    records.mkdir()
+    (records / "1.json").write_text(json.dumps({
+        "stable_creator_id": "synthetic:1",
+        "metadata": {"auto_review_draft": {
+            "contact_quote": "=business@example.test",
+            "backup_quote": "=https://example.test/contact",
+        }},
+    }), encoding="utf-8")
+    claims = [
+        {"stable_creator_id": "synthetic:1", "check": "contact",
+         "verbatim_snippet": "'=business@example.test"},
+        {"stable_creator_id": "synthetic:1", "check": "backup",
+         "verbatim_snippet": "'=https://tampered.test/contact"},
+    ]
+    restore_exported_snippets(tmp_path, claims)
+    assert claims[0]["verbatim_snippet"] == "=business@example.test"
+    assert claims[1]["verbatim_snippet"] == "'=https://tampered.test/contact"
 
 
 def test_integrity_detects_altered_sources_missing_quotes_and_stale_dates(tmp_path):

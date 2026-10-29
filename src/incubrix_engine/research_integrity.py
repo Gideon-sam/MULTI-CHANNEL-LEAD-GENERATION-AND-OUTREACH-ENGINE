@@ -13,13 +13,32 @@ from pathlib import Path
 
 from .audit_support import read_rows
 from .bulk_evidence import _snapshot
-from .exporters import _write_csv
+from .exporters import _csv_safe, _write_csv
 from .files import write_text
 from .review import PROOF_KINDS
 
 
 def _normal(text: str) -> str:
     return " ".join(text.split()).casefold()
+
+
+def restore_exported_snippets(directory: Path, claims: list[dict]) -> None:
+    """Undo Excel escaping only when the unmodified checkpoint proves the original text."""
+    escaped = {
+        (claim["stable_creator_id"], claim["check"]): claim
+        for claim in claims
+        if claim.get("verbatim_snippet", "").startswith("'")
+    }
+    if not escaped:
+        return
+    for path in (directory / "records").glob("*.json"):
+        record = json.loads(path.read_text(encoding="utf-8"))
+        draft = record.get("metadata", {}).get("auto_review_draft", {})
+        for kind in PROOF_KINDS:
+            claim = escaped.get((record["stable_creator_id"], kind))
+            original = draft.get(f"{kind}_quote", "")
+            if claim is not None and original and _csv_safe(original) == claim["verbatim_snippet"]:
+                claim["verbatim_snippet"] = original
 
 
 def check_source(job: tuple[str, list[dict], str, str]) -> list[dict]:
@@ -91,6 +110,7 @@ def verify(directory: Path, cache: Path, as_of: str, destination: Path) -> dict:
     if destination.exists():
         raise FileExistsError("Choose a new integrity report directory")
     claims = read_rows(directory / "proof_hints.csv")
+    restore_exported_snippets(directory, claims)
     aliases = {
         (row["stable_creator_id"], row["resolved_url"]): row["requested_url"]
         for row in read_rows(directory / "link_checks.csv")
