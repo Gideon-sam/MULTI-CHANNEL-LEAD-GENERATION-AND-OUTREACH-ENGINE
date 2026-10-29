@@ -15,6 +15,7 @@ from .audit_support import read_rows
 from .bulk_evidence import _snapshot
 from .exporters import _write_csv
 from .files import write_text
+from .review import PROOF_KINDS
 
 
 def _normal(text: str) -> str:
@@ -84,6 +85,26 @@ def verify(directory: Path, cache: Path, as_of: str, destination: Path) -> dict:
     if destination.exists():
         raise FileExistsError("Choose a new integrity report directory")
     claims = read_rows(directory / "proof_hints.csv")
+    scope = "completed_research_export"
+    if not claims and (directory / "records").is_dir():
+        scope = "partial_checkpoint_snapshot"
+        for path in sorted((directory / "records").glob("*.json")):
+            row = json.loads(path.read_text(encoding="utf-8"))
+            meta = row.get("metadata", {})
+            draft = meta.get("auto_review_draft", {})
+            for kind in PROOF_KINDS:
+                url = draft.get(f"{kind}_url", "")
+                snapshot = meta.get("auto_evidence_snapshots", {}).get(url, {})
+                claims.append(
+                    {
+                        "stable_creator_id": row["stable_creator_id"],
+                        "check": kind,
+                        "url": url,
+                        "verbatim_snippet": draft.get(f"{kind}_quote", ""),
+                        "fetch_date": snapshot.get("retrieved_at", ""),
+                        "sha256": snapshot.get("sha256", ""),
+                    }
+                )
     if not claims:
         raise ValueError("No completed proof_hints.csv to verify")
     groups = defaultdict(list)
@@ -111,6 +132,7 @@ def verify(directory: Path, cache: Path, as_of: str, destination: Path) -> dict:
     _write_csv(destination / "excerpt_integrity.csv", results, list(results[0]))
     count = Counter(row["integrity_status"] for row in results)
     report = {
+        "scope": scope,
         "checked_as_of": as_of,
         "proof_slots": len(results),
         "source_urls": len(groups),
