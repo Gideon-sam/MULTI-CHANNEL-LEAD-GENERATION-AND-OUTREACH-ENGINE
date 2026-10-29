@@ -22,6 +22,7 @@ from bs4 import BeautifulSoup, XMLParsedAsHTMLWarning
 from openpyxl.styles import Alignment, Font, PatternFill
 
 from .config import Config
+from .contact_evidence import publisher_contact_hints
 from .exporters import _write_csv
 from .files import write_text
 from .http_client import HttpClient
@@ -188,7 +189,13 @@ def _internal_pages(home: Snapshot) -> list[str]:
         value = urljoin(home.url, str(anchor["href"])).split("#", 1)[0]
         if _host(value) == _host(home.url) and value not in pages:
             pages.append(value)
-    return pages[:2]
+    # Include both About and Contact when duplicate About/testimonial links occur first.
+    pages.sort(key=lambda value: (
+        0 if "contact" in urlparse(value).path.casefold() else
+        1 if "about" in urlparse(value).path.casefold() else 2,
+        len(urlparse(value).path),
+    ))
+    return pages[:4]
 
 
 def _routes(pages: list[Snapshot]) -> list[tuple[str, str, str, str]]:
@@ -367,6 +374,14 @@ def auto_review_draft(lead: Lead, snapshots: list[Snapshot]) -> tuple[dict, list
     routes = _routes([page for page in snapshots if page is not feed])
     primary = lead.channel_handle_or_url
     primary_channel = lead.best_channel
+    dated_contacts = publisher_contact_hints(
+        feed.raw, official, {route[1] for route in routes if route[0] == "Email"},
+        lead.checked_date,
+    ) if feed else []
+    dated_contact = next((item for item in dated_contacts if item["contact"] == primary), None)
+    if not dated_contact and dated_contacts:
+        dated_contact = dated_contacts[0]
+        primary, primary_channel = dated_contact["contact"], "Email"
     if not primary and routes:
         primary_channel, primary, _url, _quote = routes[0]
     primary_url, primary_quote = _find_in_snapshots(snapshots, primary)
@@ -399,6 +414,11 @@ def auto_review_draft(lead: Lead, snapshots: list[Snapshot]) -> tuple[dict, list
     activity_url, activity_quote, contact_active_date = _activity_contact_proof(
         snapshots, primary, lead.checked_date
     )
+    if dated_contact and feed:
+        primary_url, primary_quote = feed.url, dated_contact["contact_quote"]
+        activity_url = feed.url
+        activity_quote = dated_contact["contact_activity_quote"]
+        contact_active_date = dated_contact["contact_active_date"]
     draft = {
         "creator_identity_key": official if _public_url(official) else "",
         "creator_name": lead.creator_name,
