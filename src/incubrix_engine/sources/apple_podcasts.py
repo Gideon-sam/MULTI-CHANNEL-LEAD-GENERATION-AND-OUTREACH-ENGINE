@@ -714,9 +714,9 @@ async def enrich(
 
     creator = _creator_name(candidate, feed)
     creator_heuristic_passed = _looks_like_person(creator, candidate.collection_name)
-    if not creator_heuristic_passed and not identity_reviewed:
-        lead.rejection_reason = "not_clearly_creator_led"
-        return EnrichmentResult(lead, lead.rejection_reason)
+    # A show/brand name is not proof that the publisher is ineligible. Collect its
+    # official evidence and retain the identity-review flag below. The final state
+    # remains Needs review until creator-specific sources pass approve_candidate.
 
     country, country_evidence_url, country_method = _country_from_feed(feed, candidate)
     owner_email = _extract_owner_email(raw_xml)
