@@ -49,6 +49,55 @@
           "quote": "https://www.petermccormack.com/contact"
         }
       }
+    },
+    {
+      "stable_creator_id": "apple-podcast:1516426036",
+      "creator_identity_key": "https://www.mydailybusiness.com/about",
+      "reviewer": "Codex (AI-assisted public-source review)",
+      "reviewed_at": "2026-10-29",
+      "rationale": "The official about page identifies Fiona Killackey as the founder, podcaster and business coach based in Melbourne. The official contact page publishes her business email and a separate contact form. The 28 October episode itself invites business strategy inquiries at that email. English episode descriptions and dated RSS items support language and activity. Her published twice-weekly podcast, weekly email and social posts support an inferred recurring multi-format publishing workflow, not an assertion of dissatisfaction. Independent human sample audit remains required.",
+      "creator_name": "Fiona Killackey",
+      "country_iso2": "AU",
+      "best_channel": "Email",
+      "channel_handle_or_url": "hello@mydailybusiness.com",
+      "backup_channel": "Website contact form",
+      "backup_handle_or_url": "https://www.mydailybusiness.com/contact",
+      "contact_active_date": "2026-10-28",
+      "need_description": "Observed publishing workflow: a twice-weekly podcast, weekly newsletter and Instagram/TikTok posts require adapting content across formats. A repurposing workflow may reduce repeated production work; this is an inference, not a stated complaint.",
+      "proofs": {
+        "identity": {
+          "url": "https://www.mydailybusiness.com/about",
+          "quote": "The business was founded by Fiona Killackey in 2015"
+        },
+        "country": {
+          "url": "https://www.mydailybusiness.com/about",
+          "quote": "Fiona Killackey is a business coach and business consultant based in Melbourne, Australia"
+        },
+        "language": {
+          "url": "https://feeds.simplecast.com/2cAIE3gH",
+          "quote": "In this deeply personal quick tip episode, Fiona Killackey reflects on the recent loss of a dear friend"
+        },
+        "commercial": {
+          "url": "https://www.mydailybusiness.com/about",
+          "quote": "our Sidestep the Hustle group coaching program and a range of 1:1 business coaching packages."
+        },
+        "need": {
+          "url": "https://www.mydailybusiness.com/about",
+          "quote": "twice-weekly podcast , weekly Sunday email and Instagram and Tik Tok posts"
+        },
+        "contact": {
+          "url": "https://feeds.simplecast.com/2cAIE3gH",
+          "quote": "Need help with your own business strategy, impact, visibility or personal brand ? Get in touch: hello@mydailybusiness.com"
+        },
+        "contact_activity": {
+          "url": "https://feeds.simplecast.com/2cAIE3gH",
+          "quote": "<pubDate>Wed, 28 Oct 2026 18:00:00 +0000</pubDate>"
+        },
+        "backup": {
+          "url": "https://www.mydailybusiness.com/contact",
+          "quote": "https://www.mydailybusiness.com/contact"
+        }
+      }
     }
   ]
 }
