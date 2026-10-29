@@ -1,4 +1,54 @@
 {
   "schema_version": 1,
-  "reviews": []
+  "reviews": [
+    {
+      "stable_creator_id": "apple-podcast:1317356120",
+      "creator_identity_key": "https://www.petermccormack.com/",
+      "reviewer": "Codex (AI-assisted public-source review)",
+      "reviewed_at": "2026-10-29",
+      "rationale": "Official Peter McCormack show site identifies the creator and records interviews in London; its contact page lists a Bedford registered office, sponsorship inquiries, and a separate form. The 27 October 2026 RSS episode itself invites contact with Pete at the listed email, so the contact is more than an RSS owner mailbox. The show describes a twice-weekly long-form production schedule and says its ideas rarely fit in a clip; this supports an inferred content adaptation workflow need, not a stated complaint. AI-assisted semantic review requires an independent human sample audit before submission.",
+      "creator_name": "Peter McCormack",
+      "country_iso2": "GB",
+      "best_channel": "Email",
+      "channel_handle_or_url": "me@petermccormack.com",
+      "backup_channel": "Website contact form",
+      "backup_handle_or_url": "https://www.petermccormack.com/contact",
+      "contact_active_date": "2026-10-27",
+      "need_description": "Observed content-format challenge: the twice-weekly long-form show says ideas worth hearing rarely fit in a clip; adapting those interviews into accurate platform-specific formats may require a deliberate workflow. This is an inference, not a claim of dissatisfaction.",
+      "proofs": {
+        "identity": {
+          "url": "https://www.petermccormack.com/about",
+          "quote": "Peter McCormack"
+        },
+        "country": {
+          "url": "https://www.petermccormack.com/contact",
+          "quote": "5 Goldington Road, Bedford, MK40 3JY"
+        },
+        "language": {
+          "url": "https://feeds.acast.com/public/shows/69d4f193b76468caacc5068f",
+          "quote": "<language>en</language>"
+        },
+        "commercial": {
+          "url": "https://www.petermccormack.com/contact",
+          "quote": "Guest suggestions, sponsorship, press"
+        },
+        "need": {
+          "url": "https://www.petermccormack.com/about",
+          "quote": "The ideas worth your time rarely fit in a clip."
+        },
+        "contact": {
+          "url": "https://feeds.acast.com/public/shows/69d4f193b76468caacc5068f",
+          "quote": "me@petermccormack.com"
+        },
+        "contact_activity": {
+          "url": "https://feeds.acast.com/public/shows/69d4f193b76468caacc5068f",
+          "quote": "<pubDate>Tue, 27 Oct 2026 18:08:08 GMT</pubDate>"
+        },
+        "backup": {
+          "url": "https://www.petermccormack.com/contact",
+          "quote": "https://www.petermccormack.com/contact"
+        }
+      }
+    }
+  ]
 }
