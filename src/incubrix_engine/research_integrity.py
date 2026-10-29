@@ -24,19 +24,25 @@ def _normal(text: str) -> str:
 
 def check_source(job: tuple[str, list[dict], str, str]) -> list[dict]:
     url, claims, cache_dir, as_of = job
-    digest = hashlib.sha256((url + "?{}").encode()).hexdigest()
     cache = Path(cache_dir)
-    archive = cache / f"{digest}.body.gz"
-    legacy = cache / f"{digest}.body"
-    meta_path = cache / f"{digest}.json"
     body = b""
     cached = {}
     cache_error = ""
-    try:
-        body = gzip.decompress(archive.read_bytes()) if archive.exists() else legacy.read_bytes()
-        cached = json.loads(meta_path.read_text(encoding="utf-8"))
-    except (OSError, ValueError, TypeError) as error:
-        cache_error = type(error).__name__
+    cache_urls = list(dict.fromkeys([url, *[claim.get("requested_url", "") for claim in claims]]))
+    for cache_url in filter(None, cache_urls):
+        digest = hashlib.sha256((cache_url + "?{}").encode()).hexdigest()
+        archive = cache / f"{digest}.body.gz"
+        legacy = cache / f"{digest}.body"
+        meta_path = cache / f"{digest}.json"
+        try:
+            body = (
+                gzip.decompress(archive.read_bytes()) if archive.exists() else legacy.read_bytes()
+            )
+            cached = json.loads(meta_path.read_text(encoding="utf-8"))
+            cache_error = ""
+            break
+        except (OSError, ValueError, TypeError) as error:
+            cache_error = type(error).__name__
     actual_hash = hashlib.sha256(body).hexdigest() if body else ""
     raw = _normal(body[: 1024 * 1024].decode("utf-8", errors="replace"))
     visible = None
@@ -85,12 +91,24 @@ def verify(directory: Path, cache: Path, as_of: str, destination: Path) -> dict:
     if destination.exists():
         raise FileExistsError("Choose a new integrity report directory")
     claims = read_rows(directory / "proof_hints.csv")
+    aliases = {
+        (row["stable_creator_id"], row["resolved_url"]): row["requested_url"]
+        for row in read_rows(directory / "link_checks.csv")
+        if row["resolved_url"]
+    }
     scope = "completed_research_export"
     if not claims and (directory / "records").is_dir():
         scope = "partial_checkpoint_snapshot"
         for path in sorted((directory / "records").glob("*.json")):
             row = json.loads(path.read_text(encoding="utf-8"))
             meta = row.get("metadata", {})
+            aliases.update(
+                {
+                    (row["stable_creator_id"], check["resolved_url"]): check["requested_url"]
+                    for check in meta.get("auto_link_checks", [])
+                    if check["resolved_url"]
+                }
+            )
             draft = meta.get("auto_review_draft", {})
             for kind in PROOF_KINDS:
                 url = draft.get(f"{kind}_url", "")
@@ -110,6 +128,7 @@ def verify(directory: Path, cache: Path, as_of: str, destination: Path) -> dict:
     groups = defaultdict(list)
     results = []
     for claim in claims:
+        claim["requested_url"] = aliases.get((claim["stable_creator_id"], claim["url"]), "")
         if claim["url"] and claim["verbatim_snippet"]:
             groups[claim["url"]].append(claim)
         else:
