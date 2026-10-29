@@ -1,5 +1,9 @@
 # IncuBrix reviewer start here
 
+Read [the latest measured evidence status](docs/current-evidence-status.md) first. It distinguishes
+the completed 3,590-candidate research workbook from the two newly source-rechecked leads and
+the historical dashboard. The 3,000-qualified-lead target has not been achieved.
+
 ## Run
 
 From `D:\Growth`, use the one command in `README.md`:
