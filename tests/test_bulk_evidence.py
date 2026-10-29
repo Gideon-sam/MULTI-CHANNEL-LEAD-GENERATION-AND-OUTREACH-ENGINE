@@ -5,6 +5,7 @@ import openpyxl
 from incubrix_engine.bulk_evidence import (
     Snapshot,
     _activity_contact_proof,
+    _country_names_creator,
     _routes,
     auto_review_draft,
 )
@@ -101,3 +102,8 @@ def test_social_share_and_book_listing_are_not_contact_routes():
         "",
     )
     assert _routes([page]) == []
+
+
+def test_staff_location_is_not_used_as_creator_location():
+    assert not _country_names_creator("Alex Smith", "Our editor Jane lives in London.")
+    assert _country_names_creator("Alex Smith", "Alex Smith is based in Canada.")

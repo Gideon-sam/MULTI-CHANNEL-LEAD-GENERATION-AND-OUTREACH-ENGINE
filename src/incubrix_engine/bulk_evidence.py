@@ -284,6 +284,30 @@ def _country_proof(country: str, snapshots: list[Snapshot]) -> tuple[str, str]:
     return "", ""
 
 
+def _country_names_creator(name: str, quote: str) -> bool:
+    """A location for a guest or staff member is not a creator-country prefill."""
+    tokens = re.findall(r"[a-z]+", name.casefold())
+    return len(tokens) >= 2 and all(
+        re.search(rf"\b{re.escape(token)}\b", quote.casefold()) for token in tokens[:2]
+    )
+
+
+def _guard_country_draft(lead: Lead) -> None:
+    draft = lead.metadata.get("auto_review_draft", {})
+    quote = draft.get("country_quote", "")
+    if quote and not _country_names_creator(lead.creator_name, quote):
+        lead.metadata["unattributed_country_hint"] = {
+            "url": draft.get("country_url", ""),
+            "quote": quote,
+            "reason": "Location excerpt does not name this creator",
+        }
+        for key in ("country_iso2", "country_url", "country_quote"):
+            draft[key] = ""
+        missing = lead.metadata.setdefault("auto_evidence_missing", [])
+        if "country" not in missing:
+            missing.append("country")
+
+
 def _language_proof(feed: Snapshot | None) -> tuple[str, str]:
     if feed is None:
         return "", ""
@@ -360,9 +384,11 @@ def auto_review_draft(lead: Lead, snapshots: list[Snapshot]) -> tuple[dict, list
             continue
         found, location = _country_from_text(page.visible)
         if found:
-            country_hint = found
-            country_url, country_quote = page.url, _snippet(page.visible, location)
-            break
+            quote = _snippet(page.visible, location)
+            if _country_names_creator(lead.creator_name, quote):
+                country_hint = found
+                country_url, country_quote = page.url, quote
+                break
     language_url, language_quote = _language_proof(feed)
     commercial_url, commercial_quote = _commercial_proof(snapshots)
     need_url, need_quote = _find_in_snapshots(snapshots, lead.personalization_hook)
@@ -536,7 +562,10 @@ async def collect(
         async def one(candidate):
             record_path = checkpoints / f"{candidate.apple_id}.json"
             if resume and record_path.exists():
-                return Lead(**json.loads(record_path.read_text(encoding="utf-8"))), True
+                lead = Lead(**json.loads(record_path.read_text(encoding="utf-8")))
+                _guard_country_draft(lead)
+                write_text(record_path, json.dumps(asdict(lead), ensure_ascii=False, indent=2))
+                return lead, True
             async with semaphore:
                 try:
                     async with asyncio.timeout(180):
