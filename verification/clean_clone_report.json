@@ -1,22 +1,22 @@
 {
-  "checked_at": "2026-10-29T17:10:08.286036+00:00",
-  "git_commit": "5795f1d1dc3b6d1b7a7e8b0cb719d2ccbb3f5a1e",
-  "clone_directory": "C:\\curl\\bin\\incubrix-clean-clone-qjau16d4\\project",
+  "checked_at": "2026-10-30T17:33:59.837190+00:00",
+  "git_commit": "966190c77774c081191a62616575b88869076ca4",
+  "clone_directory": "C:\\curl\\bin\\incubrix-clean-clone-sq2vmv2z\\project",
   "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\Run-Submission.ps1 -Mode smoke",
   "exit_code": 0,
-  "runtime_seconds": 141.75,
+  "runtime_seconds": 141.83,
   "passed": true,
   "run_evidence": {
     "normal": {
       "metrics": {
-        "target_leads": 3000,
+        "target_leads": 5000,
         "input_size": 4,
         "qualified_pool": 0,
         "produced": 0,
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 2,
-        "runtime_minutes": 0.09
+        "runtime_minutes": 0.16
       },
       "http": {
         "network_requests": 11,
@@ -40,14 +40,14 @@
     },
     "repeat": {
       "metrics": {
-        "target_leads": 3000,
+        "target_leads": 5000,
         "input_size": 4,
         "qualified_pool": 0,
         "produced": 0,
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 2,
-        "runtime_minutes": 0.06
+        "runtime_minutes": 0.09
       },
       "http": {
         "network_requests": 2,
@@ -71,14 +71,14 @@
     },
     "new_input_refresh": {
       "metrics": {
-        "target_leads": 3000,
+        "target_leads": 5000,
         "input_size": 6,
         "qualified_pool": 0,
         "produced": 0,
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 4,
-        "runtime_minutes": 0.11
+        "runtime_minutes": 0.14
       },
       "http": {
         "network_requests": 15,
@@ -104,14 +104,14 @@
     },
     "failure_recovery": {
       "metrics": {
-        "target_leads": 3000,
+        "target_leads": 5000,
         "input_size": 4,
         "qualified_pool": 0,
         "produced": 0,
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 2,
-        "runtime_minutes": 0.07
+        "runtime_minutes": 0.11
       },
       "http": {
         "network_requests": 10,
