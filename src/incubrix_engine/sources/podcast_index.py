@@ -6,6 +6,7 @@ import asyncio
 import hashlib
 import json
 import os
+import ssl
 import time
 from collections.abc import Callable
 from datetime import UTC, date, datetime
@@ -14,6 +15,7 @@ from typing import Self
 from urllib.parse import urlparse
 
 import httpx
+import truststore
 
 from ..config import Config
 from ..models import PodcastCandidate
@@ -46,6 +48,7 @@ class PodcastIndexApi:
         self.cache_hits = 0
         self.client = httpx.AsyncClient(
             base_url=API_ROOT,
+            verify=truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT),
             timeout=httpx.Timeout(30),
             headers={"User-Agent": "IncuBrixAssessmentResearch/1.0", "Accept": "application/json"},
         )
