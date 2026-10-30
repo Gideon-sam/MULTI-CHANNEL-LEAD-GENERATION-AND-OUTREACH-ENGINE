@@ -71,3 +71,45 @@ def test_converter_rejects_changed_identity(tmp_path):
     book.close()
     with pytest.raises(ValueError, match="Stable IDs"):
         convert_forms(path, tmp_path / "blocked.xlsx")
+
+
+def test_converter_rejects_changed_queue_before_writing_outputs(tmp_path):
+    queue, path = make_forms(tmp_path)
+    queue.write_text("[]", encoding="utf-8")
+    with pytest.raises(ValueError, match="Source queue changed"):
+        convert_forms(path, tmp_path / "blocked.xlsx")
+    assert not (tmp_path / "blocked.xlsx").exists()
+    assert not (tmp_path / "blocked.validation.json").exists()
+
+
+@pytest.mark.parametrize("change", ["decision", "field", "check", "formula"])
+def test_accidental_workbook_changes_fail_with_clear_errors(tmp_path, change):
+    _, path = make_forms(tmp_path)
+    book = openpyxl.load_workbook(path)
+    sheet = book["Creator_001"]
+    if change == "decision":
+        sheet["B16"] = "Approoved"
+    elif change == "field":
+        sheet.insert_rows(7)
+    elif change == "check":
+        sheet["A23"] = "different check"
+    else:
+        sheet["B6"] = '=HYPERLINK("https://example.test")'
+    book.save(path)
+    book.close()
+    with pytest.raises(ValueError):
+        convert_forms(path, tmp_path / "blocked.xlsx")
+
+
+def test_offset_batch_is_reproducible_and_does_not_repeat_candidates(tmp_path):
+    queue, _path = make_forms(tmp_path)
+    rows = json.loads(queue.read_text(encoding="utf-8"))
+    rows.append({**rows[0], "stable_creator_id": "synthetic:2"})
+    queue.write_text(json.dumps(rows), encoding="utf-8")
+    other = tmp_path / "batch2.xlsx"
+    export_forms(queue, other, limit=1, offset=1)
+    book = openpyxl.load_workbook(other)
+    assert book["Creator_001"]["B3"].value == "synthetic:2"
+    book.close()
+    with pytest.raises(ValueError, match="offset"):
+        export_forms(queue, tmp_path / "invalid.xlsx", offset=10)

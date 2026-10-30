@@ -65,6 +65,15 @@ def load_reviews(path: Path) -> dict[str, dict]:
         if missing:
             raise ValueError(f"Review lacks required fields: {', '.join(missing)}")
         stable_id = review["stable_creator_id"]
+        for field in ("reviewed_at", "contact_active_date"):
+            try:
+                date.fromisoformat(review[field])
+            except ValueError:
+                raise ValueError(f"{stable_id}: {field} must be YYYY-MM-DD") from None
+        if review["contact_active_date"] > review["reviewed_at"]:
+            raise ValueError(f"{stable_id}: contact activity cannot follow the review date")
+        if not _public_url(review["creator_identity_key"]):
+            raise ValueError(f"{stable_id}: creator identity must be a valid public URL")
         if stable_id in result:
             raise ValueError(f"Duplicate review: {stable_id}")
         proofs = review.get("proofs", {})
@@ -82,6 +91,8 @@ def load_reviews(path: Path) -> dict[str, dict]:
                 raise ValueError(f"{stable_id}: missing {kind} URL or exact excerpt")
             if len(proof["quote"]) > 400:
                 raise ValueError(f"{stable_id}: keep {kind} excerpt under 400 characters")
+            if not _public_url(proof["url"]):
+                raise ValueError(f"{stable_id}: invalid {kind} evidence URL")
         result[stable_id] = review
     return result
 
@@ -91,8 +102,30 @@ def _normal(value: str) -> str:
 
 
 def _public_url(value: str) -> bool:
+    try:
+        parsed = urlparse(value)
+        return (
+            parsed.scheme in {"http", "https"}
+            and bool(parsed.hostname)
+            and not parsed.username
+            and not parsed.password
+            and not any(character.isspace() for character in value)
+            and (parsed.port is None or 0 < parsed.port <= 65535)
+        )
+    except (ValueError, TypeError):
+        return False
+
+
+def _route_key(value: str) -> str:
+    """Equivalent URL spellings do not constitute a second contact route."""
+    value = value.strip()
+    if not _public_url(value):
+        return value.casefold()
     parsed = urlparse(value)
-    return parsed.scheme in {"http", "https"} and bool(parsed.hostname) and not parsed.username
+    host = parsed.hostname.casefold().removeprefix("www.")
+    port = parsed.port
+    authority = host if port in {None, 80, 443} else f"{host}:{port}"
+    return f"{authority}{parsed.path.rstrip('/')}?{parsed.query}"
 
 
 async def approve_candidate(
@@ -104,6 +137,10 @@ async def approve_candidate(
 ) -> Lead:
     if review is None:
         return lead
+    review = dict(review)
+    for channel in ("best_channel", "backup_channel"):
+        if str(review.get(channel, "")).strip().casefold() == "email":
+            review[channel] = "Email"
 
     def fail(reason: str) -> Lead:
         lead.rejection_reason = f"review_failed:{reason}"
@@ -143,7 +180,7 @@ async def approve_candidate(
             return fail("invalid_backup_email")
     elif not _public_url(backup):
         return fail("invalid_backup_url")
-    if _normal(backup) == _normal(review["channel_handle_or_url"]):
+    if _route_key(backup) == _route_key(review["channel_handle_or_url"]):
         return fail("backup_must_be_a_second_route")
     if _normal(backup) not in _normal(review["proofs"]["backup"]["quote"]):
         return fail("backup_excerpt_must_contain_exact_contact")

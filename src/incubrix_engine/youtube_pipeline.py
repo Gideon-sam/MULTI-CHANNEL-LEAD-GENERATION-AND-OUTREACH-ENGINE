@@ -120,6 +120,10 @@ async def run_youtube_pipeline(
                 for field, value in safe_drafts(asdict(lead)).items():
                     setattr(lead, field, value)
                 rows.append(lead)
+            from .manual_decisions import apply_rejection, load_decisions
+            decisions = load_decisions(root / "config/review_decisions.json")
+            for lead in rows:
+                apply_rejection(lead, decisions)
             store.upsert_many(rows)
             qualified = [lead for lead in rows if lead.candidate_status == "Qualified"]
             rejected = [lead for lead in rows if lead.candidate_status == "Rejected"]

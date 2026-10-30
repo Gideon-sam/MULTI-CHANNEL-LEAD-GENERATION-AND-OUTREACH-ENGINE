@@ -54,6 +54,8 @@ def publisher_contact_hints(
             item, re.IGNORECASE | re.DOTALL,
         )
         for description in descriptions:
+            if not EMAIL.search(html.unescape(description)):
+                continue
             content = html.unescape(description.replace("<![CDATA[", "").replace("]]>", ""))
             visible = " ".join(BeautifulSoup(content, "html.parser").get_text(" ", strip=True).split())
             for match in EMAIL.finditer(visible):
@@ -76,9 +78,9 @@ def publisher_contact_hints(
                 raw_match = re.search(re.escape(match.group()), description, re.IGNORECASE)
                 if not raw_match:
                     continue
-                quote = " ".join(description[
+                quote = description[
                     max(0, raw_match.start() - 140):raw_match.end() + 100
-                ].split())[:400]
+                ][:400]
                 title = re.search(r"<title\b[^>]*>(.*?)</title\s*>", item, re.IGNORECASE | re.DOTALL)
                 results.append({
                     "contact": contact,

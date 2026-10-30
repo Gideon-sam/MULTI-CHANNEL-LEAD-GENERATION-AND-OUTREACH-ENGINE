@@ -2,11 +2,11 @@
   "checked_date": "today",
   "sender_name": "Gideon Samuel",
   "sender_context": "independent Growth Engineer candidate evaluating creator workflows for IncuBrix",
-  "target_leads": 3000,
-  "priority_a_count": 25,
+  "target_leads": 5000,
+  "priority_a_count": 250,
   "max_country_share": 0.60,
   "approved_countries": ["US", "CA", "GB", "IE", "AU", "NZ", "SG"],
-  "country_targets": {"US": 550, "GB": 220, "CA": 150, "AU": 80, "IE": 25, "NZ": 25, "SG": 20},
+  "country_targets": {"US": 2000, "GB": 1000, "CA": 750, "AU": 750, "IE": 200, "NZ": 200, "SG": 100},
   "search_terms": [
     "business", "entrepreneurship", "leadership", "marketing", "sales", "startup",
     "coaching", "consulting", "creator economy", "personal brand", "productivity",
@@ -29,7 +29,7 @@
     "language learning", "history", "philosophy", "economics", "science communication"
   ],
   "itunes_result_limit": 200,
-  "max_candidates": 12000,
+  "max_candidates": 50000,
   "network_concurrency": 48,
   "per_host_concurrency": 6,
   "request_timeout_seconds": 12,

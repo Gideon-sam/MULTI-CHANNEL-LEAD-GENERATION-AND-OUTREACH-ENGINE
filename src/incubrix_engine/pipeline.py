@@ -152,6 +152,8 @@ async def run_pipeline(
     qualified_pool: list[Lead] = []
     pending: list[Lead] = []
     reviews = load_reviews(root / config.review_file)
+    from .manual_decisions import apply_rejection, load_decisions
+    decisions = load_decisions(root / "config/review_decisions.json")
     if reviewed_only and not reviews:
         store.close()
         raise ValueError("No reviews imported. Complete the human review workbook first.")
@@ -202,6 +204,14 @@ async def run_pipeline(
             async def bounded_enrich(candidate: PodcastCandidate):
                 async with slots:
                     try:
+                        from .sources.apple_podcasts import EnrichmentResult
+                        rejected_lead = Lead(
+                            stable_creator_id=f"apple-podcast:{candidate.apple_id}",
+                            creator_name=candidate.artist_name, profile_url=candidate.apple_url,
+                            source_feed_url=candidate.feed_url, checked_date=config.checked_date,
+                        )
+                        if apply_rejection(rejected_lead, decisions):
+                            return candidate, EnrichmentResult(rejected_lead)
                         async with asyncio.timeout(90):
                             result = await enrich(
                                 candidate,

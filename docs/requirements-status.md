@@ -6,7 +6,7 @@ The supplied PDF and workbook are the assessment specification. The user's reque
 |---|---|---|
 | Five product observations | Workbook and `docs/product-observations.md` | Public-site research only; authenticated product use pending |
 | Three growth opportunities | Workbook / launch kit | Hypotheses labelled; no fabricated conversion results |
-| 1,000 unique qualified creators (2,000 requested target) | Review gate, dedupe, validation, official CSV | Not met; discovery volume cannot substitute for reviewed leads |
+| 1,000 unique qualified creators (5,000 requested target) | Review gate, dedupe, validation, official CSV | Not met; discovery volume cannot substitute for reviewed leads |
 | 80% approved markets, 3+ countries, max 60% one country | Country selection and validation | Computed from approved rows only |
 | Activity, commercial, need, contact and backup evidence | RSS checks and `config/reviews.json` | Creator-specific review required |
 | 25 Priority A three-touch sequences | Outreach exporter | Requires 25 approved leads; no invented recipients |

@@ -57,12 +57,19 @@ def _link(sheet, address, target, label):
     cell.style = "Hyperlink"
 
 
-def export_forms(queue: Path, destination: Path, limit: int = 40) -> dict:
+def export_forms(queue: Path, destination: Path, limit: int = 40, offset: int = 0) -> dict:
     if destination.exists():
         raise FileExistsError("Choose a new workbook; existing human edits are protected")
-    if limit < 1:
-        raise ValueError("limit must be positive")
+    if type(limit) is not int or limit < 1 or type(offset) is not int or offset < 0:
+        raise ValueError("limit must be positive and offset must be nonnegative integers")
     rows = json.loads(queue.read_text(encoding="utf-8"))
+    if not isinstance(rows, list) or not rows:
+        raise ValueError("The review queue must be a nonempty array")
+    ids = [row["stable_creator_id"] for row in rows]
+    if len(ids) != len(set(ids)):
+        raise ValueError("The review queue contains duplicate stable IDs")
+    if offset >= len(rows):
+        raise ValueError("offset is beyond the review pool")
     integrity = {}
     integrity_path = queue.parent / "integrity_checked" / "excerpt_integrity.csv"
     if integrity_path.exists():
@@ -73,7 +80,7 @@ def export_forms(queue: Path, destination: Path, limit: int = 40) -> dict:
         -bool(r.get("metadata", {}).get("auto_review_draft", {}).get("country_iso2")),
         r["stable_creator_id"],
     ))
-    selected = rows[:limit]
+    selected = rows[offset:offset + limit]
     book = openpyxl.Workbook()
     start = book.active
     start.title = "START_HERE"
@@ -95,6 +102,7 @@ def export_forms(queue: Path, destination: Path, limit: int = 40) -> dict:
         17: "Imported approvals are re-fetched and checked by the engine; checking a box alone does not make a lead qualified.",
         18: "Activity dates and source fetch dates are different. A recent episode does not automatically prove an active contact.",
         19: "A different country or ambiguous long-form case should remain Pending with your notes for PDF interpretation.",
+        20: f"Batch covers sorted candidates {offset + 1} through {offset + len(selected)} of {len(rows)}. Approvals require a source recheck.",
     }
     for number, text in instructions.items():
         start.cell(number, 1, text)
@@ -129,13 +137,13 @@ def export_forms(queue: Path, destination: Path, limit: int = 40) -> dict:
         _text_cell(sheet, 3, 1, "Stable ID — do not change")
         _text_cell(sheet, 3, 2, row["stable_creator_id"])
         _text_cell(sheet, 4, 1, "Yellow = your facts/verdicts. Existing text is an unverified hint.")
-        for offset, (key, label) in enumerate(FIELDS, FIRST_FIELD):
-            _text_cell(sheet, offset, 1, label)
+        for field_row, (key, label) in enumerate(FIELDS, FIRST_FIELD):
+            _text_cell(sheet, field_row, 1, label)
             value = "Pending" if key == "decision" else draft.get(key, "")
-            cell = _text_cell(sheet, offset, 2, value)
+            cell = _text_cell(sheet, field_row, 2, value)
             cell.fill = YELLOW
             cell.number_format = "@"
-            sheet.row_dimensions[offset].height = 60 if key in {"need_description", "rationale"} else 45
+            sheet.row_dimensions[field_row].height = 60 if key in {"need_description", "rationale"} else 45
         decisions = DataValidation(type="list", formula1='"Pending,Approve,Reject"')
         sheet.add_data_validation(decisions)
         decisions.add("B16")
@@ -203,10 +211,10 @@ def export_forms(queue: Path, destination: Path, limit: int = 40) -> dict:
     with atomic_destination(destination) as temporary:
         book.save(temporary)
     book.close()
-    return {"workbook": str(destination), "forms": len(selected), "pool": len(rows), "human_verdicts_filled": 0}
+    return {"workbook": str(destination), "forms": len(selected), "pool": len(rows), "offset": offset, "human_verdicts_filled": 0}
 
 
-def convert_forms(source: Path, destination: Path) -> dict:
+def convert_forms(source: Path, destination: Path, queue_path: Path | None = None) -> dict:
     """Prepare the existing import format without writing to the live review ledger."""
     if destination.exists() or destination.with_suffix(".validation.json").exists():
         raise FileExistsError("Existing converted workbook is protected")
@@ -229,13 +237,29 @@ def convert_forms(source: Path, destination: Path) -> dict:
         mapping = book["_FORM_MAP"]
         if mapping["A1"].value != "schema_version" or mapping["B1"].value != 1:
             raise ValueError("Unknown form schema")
+        queue = queue_path or Path(str(mapping["B2"].value or ""))
+        if not queue.is_file():
+            raise ValueError("Original queue is missing; provide --queue with its location")
+        raw_queue = queue.read_bytes()
+        if hashlib.sha256(raw_queue).hexdigest() != mapping["B3"].value:
+            raise ValueError("Source queue changed since export; use its original version")
+        known = {row["stable_creator_id"] for row in json.loads(raw_queue)}
+        mapped_names = {row[0] for row in mapping.iter_rows(min_row=4, max_col=2, values_only=True)}
+        if mapped_names != {name for name in book.sheetnames if name.startswith("Creator_")}:
+            raise ValueError("Creator forms were added, removed or renamed")
         seen = set()
         for name, stable_id in mapping.iter_rows(min_row=4, max_col=2, values_only=True):
             sheet = book[name]
-            if literal(sheet["B3"]) != stable_id or stable_id in seen:
+            if literal(sheet["B3"]) != stable_id or stable_id in seen or stable_id not in known:
                 raise ValueError("Stable IDs were changed or duplicated")
             seen.add(stable_id)
+            if any(sheet.cell(FIRST_FIELD + i, 1).value != label for i, (_, label) in enumerate(FIELDS)):
+                raise ValueError(f"{name}: form field rows were changed")
+            if any(sheet.cell(FIRST_CHECK + i, 1).value != kind for i, (kind, _) in enumerate(CHECKS)):
+                raise ValueError(f"{name}: check rows were changed")
             values = {key: literal(sheet.cell(FIRST_FIELD + i, 2)) for i, (key, _) in enumerate(FIELDS)}
+            if values["decision"].casefold() not in {"", "pending", "reject", "approve"}:
+                raise ValueError(f"{name}: choose Pending, Approve or Reject")
             if values["decision"].casefold() != "approve":
                 continue
             for i, (kind, _) in enumerate(CHECKS, FIRST_CHECK):
@@ -268,8 +292,10 @@ def main():
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--limit", type=int, default=40)
+    parser.add_argument("--offset", type=int, default=0)
+    parser.add_argument("--queue", type=Path, help="original source queue for conversion")
     args = parser.parse_args()
-    result = export_forms(args.input, args.out, args.limit) if args.action == "export" else convert_forms(args.input, args.out)
+    result = export_forms(args.input, args.out, args.limit, args.offset) if args.action == "export" else convert_forms(args.input, args.out, args.queue)
     print(json.dumps(result, indent=2))
 
 
