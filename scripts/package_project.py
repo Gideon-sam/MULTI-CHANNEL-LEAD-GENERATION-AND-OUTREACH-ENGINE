@@ -18,6 +18,8 @@ def main() -> None:
         "README.md",
         "START_HERE.md",
         "REVIEW_3000.md",
+        "MANUAL_REVIEW_START.xlsx",
+        "MANUAL_REVIEW_RECORDED_20261030.xlsx",
         "Run-Project.ps1",
         "Run-Submission.ps1",
         "pyproject.toml",

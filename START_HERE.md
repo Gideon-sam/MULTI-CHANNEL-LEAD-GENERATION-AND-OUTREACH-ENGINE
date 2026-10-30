@@ -1,8 +1,9 @@
 # IncuBrix reviewer start here
 
-Read [the latest measured evidence status](docs/current-evidence-status.md) first. It distinguishes
-the completed 3,590-candidate research workbook from the two newly source-rechecked leads and
-the historical dashboard. The 3,000-qualified-lead target has not been achieved.
+Open **MANUAL_REVIEW_RECORDED_20261030.xlsx**, then **REVIEW_SUMMARY** for your latest decisions.
+Read [the next review steps](docs/review-follow-up-20261030.md). Creators 23 and 31 are rejected;
+your freshness/link approvals are recorded. Other missing evidence still needs resolution.
+The target is **5,000 qualified creators**, which has not been achieved.
 
 ## Run
 

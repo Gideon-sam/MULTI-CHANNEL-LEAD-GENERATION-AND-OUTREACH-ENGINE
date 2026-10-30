@@ -1,5 +1,9 @@
 # Your manual review: one workbook
 
+**October 30 update:** use `MANUAL_REVIEW_RECORDED_20261030.xlsx` for the decisions you
+reported in chat. See [your next steps](review-follow-up-20261030.md). The instructions below
+describe the original blank form and the remaining checks; do not overwrite your recorded copy.
+
 Open `MANUAL_REVIEW_START.xlsx` in the project root. Do not work in the old audit CSV for
 this task. The workbook contains 40 prioritized candidates from the existing 3,590-row pool;
 it is not a random audit or a claim that those 40 qualify. No human verdict is prefilled.

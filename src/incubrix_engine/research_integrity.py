@@ -22,6 +22,14 @@ def _normal(text: str) -> str:
     return " ".join(text.split()).casefold()
 
 
+def _checkpoint_record(path: Path) -> dict:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    record = payload.get("record", payload)
+    if not isinstance(record, dict) or not record.get("stable_creator_id"):
+        raise ValueError(f"Invalid research checkpoint: {path.name}")
+    return record
+
+
 def restore_exported_snippets(directory: Path, claims: list[dict]) -> None:
     """Undo Excel escaping only when the unmodified checkpoint proves the original text."""
     escaped = {
@@ -32,7 +40,7 @@ def restore_exported_snippets(directory: Path, claims: list[dict]) -> None:
     if not escaped:
         return
     for path in (directory / "records").glob("*.json"):
-        record = json.loads(path.read_text(encoding="utf-8"))
+        record = _checkpoint_record(path)
         draft = record.get("metadata", {}).get("auto_review_draft", {})
         for kind in PROOF_KINDS:
             claim = escaped.get((record["stable_creator_id"], kind))
@@ -120,7 +128,7 @@ def verify(directory: Path, cache: Path, as_of: str, destination: Path) -> dict:
     if not claims and (directory / "records").is_dir():
         scope = "partial_checkpoint_snapshot"
         for path in sorted((directory / "records").glob("*.json")):
-            row = json.loads(path.read_text(encoding="utf-8"))
+            row = _checkpoint_record(path)
             meta = row.get("metadata", {})
             aliases.update(
                 {

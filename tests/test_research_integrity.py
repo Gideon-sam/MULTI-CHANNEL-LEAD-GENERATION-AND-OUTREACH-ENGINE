@@ -2,19 +2,24 @@ import gzip
 import hashlib
 import json
 
+import pytest
+
 from incubrix_engine.research_integrity import check_source, restore_exported_snippets
 
 
-def test_excel_escape_is_restored_only_when_original_checkpoint_matches(tmp_path):
+@pytest.mark.parametrize("recovery_format", [False, True])
+def test_excel_escape_is_restored_only_when_original_checkpoint_matches(tmp_path, recovery_format):
     records = tmp_path / "records"
     records.mkdir()
-    (records / "1.json").write_text(json.dumps({
+    record = {
         "stable_creator_id": "synthetic:1",
         "metadata": {"auto_review_draft": {
             "contact_quote": "=business@example.test",
             "backup_quote": "=https://example.test/contact",
         }},
-    }), encoding="utf-8")
+    }
+    payload = {"record": record, "result": "recovered"} if recovery_format else record
+    (records / "1.json").write_text(json.dumps(payload), encoding="utf-8")
     claims = [
         {"stable_creator_id": "synthetic:1", "check": "contact",
          "verbatim_snippet": "'=business@example.test"},
