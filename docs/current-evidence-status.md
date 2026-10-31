@@ -49,9 +49,9 @@ proof (637) and backup proof (412). These are evidence gaps, not optional spread
 - Clean clone of code commit `2a7e04b`: README-only command passed in **145.2 seconds**. It verified
   a clean installation, stable repeat IDs, zero duplicate state rows, a small new-input refresh and
   recovery that continued after one declared injected HTTP 404.
-- Final package: `dist/IncuBrix_Project_Draft_20261031T122549Z.zip`, 70,342,712 bytes,
-  SHA-256 `ed71117fced9c200695ab9a6534664ff9141f9d7dfac69a357dafca23b0e30e3`.
-  It contains 415 project files plus its package manifest. Four configured secrets were checked;
+- The package builder writes the final archive and its SHA-256 under `dist/`. The hash is reported
+  externally rather than embedded in the archive's own status document. The reviewed package
+  contains 415 project files plus its package manifest. Four configured secrets were checked;
   there were zero matches. Local account files, `.env`, databases and resumable checkpoints are
   excluded.
 - GitHub: `https://github.com/Gideon-sam/MULTI-CHANNEL-LEAD-GENERATION-AND-OUTREACH-ENGINE`
