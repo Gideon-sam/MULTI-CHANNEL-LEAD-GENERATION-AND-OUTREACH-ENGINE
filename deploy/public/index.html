@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="IncuBrix multi-channel creator lead qualification and outreach engine — auditable evidence, human review, and safe launch tooling.">
+  <meta name="color-scheme" content="light dark">
+  <title>IncuBrix Growth Engine</title>
+  <style>
+    :root { --navy:#0b2239; --navy2:#123f56; --teal:#087f73; --teal2:#12b8a6; --blue:#2563eb; --ink:#142c3b; --muted:#637885; --canvas:#f4f8f9; --surface:#fff; --line:#d8e4e8; --mint:#def8f2; --amber:#a25c00; --amber-bg:#fff3d3; --shadow:0 20px 60px rgba(11,34,57,.10); }
+    [data-theme="dark"] { --navy:#061722; --navy2:#0a2b3a; --teal:#5eead4; --teal2:#2dd4bf; --blue:#7aa2ff; --ink:#eff9fa; --muted:#a9bec7; --canvas:#061a22; --surface:#102831; --line:#29464f; --mint:#123d3a; --amber:#ffd078; --amber-bg:#493817; --shadow:0 24px 70px rgba(0,0,0,.30); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--canvas); color:var(--ink); font:15px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    a { color:inherit; }
+    button,a { outline-offset:4px; }
+    :focus-visible { outline:3px solid var(--teal2); }
+    .shell { width:min(1180px,calc(100% - 38px)); margin:auto; }
+    .hero { position:relative; overflow:hidden; min-height:620px; color:#fff; background:linear-gradient(125deg,var(--navy),var(--navy2) 58%,#08645e); }
+    .hero::before { content:""; position:absolute; inset:0; opacity:.16; background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px); background-size:58px 58px; mask-image:linear-gradient(to bottom,#000,transparent 88%); }
+    .glow { position:absolute; width:620px; height:620px; right:-230px; top:-210px; border-radius:50%; background:radial-gradient(circle,#5eead477,transparent 68%); }
+    nav { position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:24px 0; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:850; letter-spacing:-.01em; text-decoration:none; }
+    .mark { display:grid; place-items:center; width:42px; height:42px; border-radius:13px; color:#073b3a; background:linear-gradient(135deg,#99f6e4,#14b8a6); box-shadow:0 10px 28px #031c2a66; }
+    .nav-actions { display:flex; gap:10px; align-items:center; }
+    .button { display:inline-flex; justify-content:center; align-items:center; min-height:42px; padding:9px 15px; border:1px solid #ffffff4a; border-radius:11px; background:#ffffff12; color:#fff; font-weight:760; text-decoration:none; cursor:pointer; }
+    .button:hover { background:#ffffff22; }
+    .button.primary { border-color:transparent; background:#5eead4; color:#063b39; }
+    .hero-grid { position:relative; z-index:1; display:grid; grid-template-columns:1.2fr .8fr; gap:58px; align-items:center; padding:74px 0 112px; }
+    .eyebrow { margin:0 0 14px; color:#a7f3e7; font-size:12px; font-weight:850; letter-spacing:.17em; text-transform:uppercase; }
+    h1 { max-width:780px; margin:0; font-size:clamp(42px,6vw,74px); line-height:1.01; letter-spacing:-.06em; }
+    .lead { max-width:720px; margin:24px 0 0; color:#d8e9ec; font-size:18px; }
+    .cta { display:flex; flex-wrap:wrap; gap:11px; margin-top:30px; }
+    .signal-card { padding:24px; border:1px solid #ffffff32; border-radius:22px; background:#ffffff0f; backdrop-filter:blur(10px); box-shadow:0 28px 80px #061a2a55; }
+    .signal-head { display:flex; justify-content:space-between; gap:14px; align-items:center; }
+    .signal-head span { color:#b9dce0; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .signal-head strong { color:#9af3e5; }
+    .bar { height:10px; margin:15px 0 10px; border-radius:99px; overflow:hidden; background:#ffffff20; }
+    .bar span { display:block; width:94.4%; height:100%; border-radius:inherit; background:linear-gradient(90deg,#5eead4,#60a5fa); }
+    .signal-card p { margin:0; color:#cce3e6; font-size:13px; }
+    .mini-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
+    .mini { padding:14px; border-radius:13px; background:#061b2844; }
+    .mini strong { display:block; font-size:24px; }
+    .mini span { color:#b9dce0; font-size:11px; text-transform:uppercase; letter-spacing:.07em; }
+    main { margin-top:-52px; position:relative; z-index:3; }
+    .metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .metric,.panel { border:1px solid var(--line); background:var(--surface); box-shadow:var(--shadow); }
+    .metric { padding:22px; border-radius:17px; }
+    .metric span { color:var(--muted); font-size:11px; font-weight:830; letter-spacing:.08em; text-transform:uppercase; }
+    .metric strong { display:block; margin-top:7px; font-size:31px; line-height:1.1; letter-spacing:-.04em; }
+    .metric small { display:block; margin-top:6px; color:var(--muted); }
+    section { padding:70px 0; }
+    .section-head { display:flex; align-items:end; justify-content:space-between; gap:30px; margin-bottom:26px; }
+    .section-head h2 { max-width:650px; margin:0; font-size:clamp(30px,4vw,48px); line-height:1.08; letter-spacing:-.045em; }
+    .section-head p { max-width:470px; margin:0; color:var(--muted); }
+    .workflow { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+    .step { position:relative; padding:24px; border:1px solid var(--line); border-radius:18px; background:var(--surface); }
+    .step b { display:grid; place-items:center; width:34px; height:34px; margin-bottom:22px; border-radius:11px; background:var(--mint); color:var(--teal); }
+    .step h3 { margin:0; font-size:17px; }
+    .step p { margin:9px 0 0; color:var(--muted); font-size:13px; }
+    .split { display:grid; grid-template-columns:.9fr 1.1fr; gap:18px; }
+    .panel { padding:28px; border-radius:21px; }
+    .panel h3 { margin:0; font-size:22px; letter-spacing:-.02em; }
+    .panel > p { color:var(--muted); }
+    .gate { display:flex; gap:13px; padding:13px 0; border-top:1px solid var(--line); }
+    .gate:first-of-type { margin-top:18px; }
+    .check { flex:0 0 auto; display:grid; place-items:center; width:25px; height:25px; border-radius:8px; background:var(--mint); color:var(--teal); font-weight:900; }
+    .gate strong { display:block; }
+    .gate span { color:var(--muted); font-size:13px; }
+    .truth { padding:17px; border:1px solid #e5bd6c; border-radius:14px; background:var(--amber-bg); color:var(--amber); }
+    .truth strong { display:block; margin-bottom:4px; }
+    .source-bars { margin-top:24px; }
+    .source { margin-top:16px; }
+    .source-label { display:flex; justify-content:space-between; color:var(--muted); font-size:13px; }
+    .source .bar { background:var(--line); }
+    .source .bar span { width:83.54%; background:linear-gradient(90deg,var(--teal),var(--teal2)); }
+    .source.youtube .bar span { width:16.46%; background:linear-gradient(90deg,var(--blue),#7c3aed); }
+    .repo { display:flex; align-items:center; justify-content:space-between; gap:26px; padding:34px; border-radius:24px; color:#fff; background:linear-gradient(120deg,var(--navy),#114a5e); box-shadow:var(--shadow); }
+    .repo h2 { margin:0; font-size:30px; letter-spacing:-.035em; }
+    .repo p { margin:8px 0 0; color:#cde5e8; }
+    footer { padding:36px 0 46px; color:var(--muted); font-size:13px; }
+    .footer { display:flex; justify-content:space-between; gap:20px; border-top:1px solid var(--line); padding-top:26px; }
+    @media(max-width:900px) { .hero-grid,.split { grid-template-columns:1fr; } .signal-card { max-width:600px; } .metrics,.workflow { grid-template-columns:1fr 1fr; } .section-head { display:block; } .section-head p { margin-top:14px; } }
+    @media(max-width:580px) { .shell { width:min(100% - 24px,1180px); } .hero { min-height:auto; } .hero-grid { padding:52px 0 88px; } .metrics,.workflow { grid-template-columns:1fr; } .nav-actions .button:first-child { display:none; } .repo,.footer { display:block; } .repo .button { margin-top:20px; } h1 { font-size:43px; } }
+    @media(prefers-reduced-motion:reduce) { * { scroll-behavior:auto !important; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="glow"></div>
+    <div class="shell">
+      <nav aria-label="Main navigation">
+        <a class="brand" href="#top"><span class="mark">IB</span><span>IncuBrix Growth Engine</span></a>
+        <div class="nav-actions"><a class="button" href="https://github.com/Gideon-sam/MULTI-CHANNEL-LEAD-GENERATION-AND-OUTREACH-ENGINE">GitHub</a><button class="button" id="theme" type="button" aria-label="Switch color theme">Theme</button></div>
+      </nav>
+      <div class="hero-grid" id="top">
+        <div>
+          <p class="eyebrow">Multi-channel lead generation · evidence first</p>
+          <h1>Creator research that survives review.</h1>
+          <p class="lead">A production-oriented engine for discovering, qualifying, tracing and preparing creator outreach—without converting missing evidence into invented facts.</p>
+          <div class="cta"><a class="button primary" href="#workflow">Explore the workflow</a><a class="button" href="#quality">See quality gates</a></div>
+        </div>
+        <aside class="signal-card" aria-label="Current review progress">
+          <div class="signal-head"><span>User review progress</span><strong>94.4%</strong></div>
+          <div class="bar"><span></span></div>
+          <p>4,720 of 5,000 candidates have a recorded human attestation. Final evidence qualification remains a separate gate.</p>
+          <div class="mini-grid"><div class="mini"><strong>4,177</strong><span>Podcast</span></div><div class="mini"><strong>823</strong><span>YouTube</span></div><div class="mini"><strong>102</strong><span>Tests passing</span></div><div class="mini"><strong>8</strong><span>Proof checks</span></div></div>
+        </aside>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="shell metrics" aria-label="Measured project status">
+      <article class="metric"><span>Candidate pool</span><strong>5,000</strong><small>unique creator names</small></article>
+      <article class="metric"><span>User-attested</span><strong>4,720</strong><small>recorded, not auto-qualified</small></article>
+      <article class="metric"><span>Data sources</span><strong>3+</strong><small>Podcast Index, Apple/RSS, YouTube</small></article>
+      <article class="metric"><span>Automated checks</span><strong>102</strong><small>full suite passing</small></article>
+    </div>
+
+    <section id="workflow">
+      <div class="shell">
+        <div class="section-head"><h2>One traceable path from discovery to launch.</h2><p>Every stage keeps unresolved candidates separate from approved leads and retains the evidence needed for a live review.</p></div>
+        <div class="workflow">
+          <article class="step"><b>1</b><h3>Discover</h3><p>Collect real platform IDs and publisher URLs from bounded public sources.</p></article>
+          <article class="step"><b>2</b><h3>Verify</h3><p>Measure publishing activity and capture dated source snapshots and exact excerpts.</p></article>
+          <article class="step"><b>3</b><h3>Review</h3><p>Require human approval for identity, country, commercial need and contact meaning.</p></article>
+          <article class="step"><b>4</b><h3>Launch safely</h3><p>Dedupe, audit, prepare Priority A sequences and test only with owned accounts.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="quality">
+      <div class="shell split">
+        <article class="panel">
+          <h3>Current data composition</h3>
+          <p>The public page reports aggregate measurements only. Creator contacts and evidence remain in the controlled local review workspace.</p>
+          <div class="source-bars"><div class="source"><div class="source-label"><span>Podcast candidates</span><strong>4,177 · 83.54%</strong></div><div class="bar"><span></span></div></div><div class="source youtube"><div class="source-label"><span>YouTube candidates</span><strong>823 · 16.46%</strong></div><div class="bar"><span></span></div></div></div>
+          <div class="truth"><strong>Truthful status</strong>A reviewer verdict is preserved as provenance. It does not bypass missing evidence, source freshness, deduplication, country mix or the final random audit.</div>
+        </article>
+        <article class="panel">
+          <h3>Qualification contract</h3>
+          <p>An approved lead needs all mandatory checks—not merely a promising discovery record.</p>
+          <div class="gate"><span class="check">✓</span><div><strong>Identity, country and English</strong><span>Creator-specific public evidence; guest locations do not count.</span></div></div>
+          <div class="gate"><span class="check">✓</span><div><strong>Recent publishing activity</strong><span>8 items in 30 days or 2 long-form items in 60 days.</span></div></div>
+          <div class="gate"><span class="check">✓</span><div><strong>Commercial activity and workflow need</strong><span>Own offer plus a specific, supportable repurposing opportunity.</span></div></div>
+          <div class="gate"><span class="check">✓</span><div><strong>Primary and backup contacts</strong><span>Active business-purpose contact plus a genuinely different route.</span></div></div>
+          <div class="gate"><span class="check">✓</span><div><strong>Eight URL/excerpt proof pairs</strong><span>Exact short text, fresh retrieval and reproducible source trail.</span></div></div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell repo"><div><h2>Inspect the complete implementation.</h2><p>Source code, tests, runbooks, audit tooling, outreach templates and deployment configuration are structured in the repository.</p></div><a class="button primary" href="https://github.com/Gideon-sam/MULTI-CHANNEL-LEAD-GENERATION-AND-OUTREACH-ENGINE">Open GitHub repository</a></div>
+    </section>
+  </main>
+
+  <footer><div class="shell footer"><span>IncuBrix Growth Engineer · Option 1</span><span>Public overview contains no creator contact data</span></div></footer>
+  <script>
+    'use strict';
+    const root = document.documentElement;
+    const saved = localStorage.getItem('incubrix-public-theme');
+    if (saved) root.dataset.theme = saved;
+    document.querySelector('#theme').addEventListener('click', () => {
+      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('incubrix-public-theme', root.dataset.theme);
+    });
+  </script>
+</body>
+</html>
