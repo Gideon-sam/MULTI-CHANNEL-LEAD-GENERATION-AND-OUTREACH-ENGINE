@@ -7,6 +7,7 @@ import openpyxl
 from incubrix_engine.attestation import record_attestation
 from incubrix_engine.master_review import _finish_workbook
 from incubrix_engine.models import Lead
+from incubrix_engine.review import PROOF_KINDS
 from incubrix_engine.review_workflow import export_review_workbook
 
 
@@ -70,3 +71,28 @@ def test_attestation_records_user_verdict_without_qualifying_or_editing_reviews(
     assert book["ATTESTATION_SUMMARY"]["B4"].value == 1
     book.close()
     assert Path(result["destination"]) == destination
+
+
+def test_attestation_matches_evidence_by_id_when_sheets_have_different_order(tmp_path):
+    source = tmp_path / "reordered.xlsx"
+    book = openpyxl.Workbook()
+    book.active.title = "REVIEW_DASHBOARD"
+    index = book.create_sheet("REVIEW_INDEX")
+    index.append(["stable_creator_id", "manual_decision", "manual_notes"])
+    index.append(["synthetic:selected", "Pending", ""])
+    index.append(["synthetic:other", "Pending", ""])
+    reviews = book.create_sheet("Reviews")
+    headers = ["stable_creator_id"]
+    for kind in PROOF_KINDS:
+        headers.extend([f"{kind}_url", f"{kind}_quote"])
+    reviews.append(headers)
+    reviews.append(["synthetic:other"] + [None] * 16)
+    reviews.append(["synthetic:selected"] + ["https://example.test", "Exact excerpt"] * 8)
+    book.save(source)
+    book.close()
+    result = record_attestation(
+        source, tmp_path / "recorded.xlsx", count=1, reviewer="Test reviewer",
+        reviewed_at="2026-10-31", note="Reviewed the first index record",
+    )
+    assert result["evidence_complete"] == 1
+    assert result["engine_qualified"] == 0

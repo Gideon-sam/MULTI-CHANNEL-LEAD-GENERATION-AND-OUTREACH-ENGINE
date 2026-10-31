@@ -75,14 +75,29 @@ def record_attestation(
 
         reviews = book["Reviews"]
         review_headers = _headers(reviews)
+        selected_ids = {
+            index.cell(row, index_headers["stable_creator_id"]).value
+            for row in range(2, count + 2)
+        }
+        if len(selected_ids) != count or None in selected_ids:
+            raise ValueError("Selected index rows must have unique, nonempty stable IDs")
+        matched_ids = set()
         evidence_complete = 0
-        for row in range(2, count + 2):
+        for row in range(2, reviews.max_row + 1):
+            stable_id = reviews.cell(row, review_headers["stable_creator_id"]).value
+            if stable_id not in selected_ids:
+                continue
+            if stable_id in matched_ids:
+                raise ValueError("Reviews contains a duplicate selected stable ID")
+            matched_ids.add(stable_id)
             complete = all(
                 str(reviews.cell(row, review_headers[f"{kind}_url"]).value or "").strip()
                 and str(reviews.cell(row, review_headers[f"{kind}_quote"]).value or "").strip()
                 for kind in PROOF_KINDS
             )
             evidence_complete += int(complete)
+        if matched_ids != selected_ids:
+            raise ValueError("Reviews lacks one or more selected stable IDs")
 
         if "ATTESTATION_SUMMARY" in book.sheetnames:
             del book["ATTESTATION_SUMMARY"]

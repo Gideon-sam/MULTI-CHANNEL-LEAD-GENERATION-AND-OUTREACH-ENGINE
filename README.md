@@ -1,9 +1,9 @@
 # IncuBrix Multi-Channel Lead Generation & Outreach Engine
 
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-2563eb?style=flat-square)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-105%20passing-087f73?style=flat-square)](#verification)
+[![Tests](https://img.shields.io/badge/tests-106%20passing-087f73?style=flat-square)](#verification)
 [![Evidence](https://img.shields.io/badge/evidence-gated-a96200?style=flat-square)](#qualification-contract)
-[![Deployment](https://img.shields.io/badge/Azure-live-7c3aed?style=flat-square)](https://incubrix-longtail.eastasia.cloudapp.azure.com/)
+[![Deployment](https://img.shields.io/badge/Azure-live-7c3aed?style=flat-square)](http://incubrix-longtail.eastasia.cloudapp.azure.com/)
 
 An auditable creator-research engine built for the IncuBrix Growth Engineer Option 1 assessment.
 It discovers real creators, measures recent publishing activity, preserves source evidence, routes
@@ -42,7 +42,7 @@ log or paste credentials into a workbook.
 | Follow the review workflow | [`MANUAL_REVIEW_5000.md`](MANUAL_REVIEW_5000.md) |
 | Open the local evidence desk | `output/current.html` |
 | Start the local dashboard | `.\Run-Project.ps1 -Action dashboard` |
-| View the public project overview | [Azure deployment](https://incubrix-longtail.eastasia.cloudapp.azure.com/) |
+| View the public project overview | [Azure deployment](http://incubrix-longtail.eastasia.cloudapp.azure.com/) |
 
 ## Measured project status
 
@@ -54,7 +54,7 @@ log or paste credentials into a workbook.
 | User-attested review rows | 4,720 |
 | Attested rows with all eight stored proof pairs | 1 |
 | Attested rows still missing one or more stored proof pairs | 4,719 |
-| Automated tests | 105 passing |
+| Automated tests | 106 passing |
 | User-rejected creators excluded from the pool | 2 |
 
 The 5,000 rows are a real discovery and research pool, not 5,000 automatically qualified leads.
@@ -193,6 +193,10 @@ bash deploy/deploy_vm.sh
 The deployment is idempotent, tests the Nginx configuration before reloading, adds restrictive
 security headers, and publishes a `/health.json` endpoint. The live hostname is
 `incubrix-longtail.eastasia.cloudapp.azure.com`.
+
+This deployment currently uses HTTP. It serves the static project overview and health endpoint;
+the private evidence desk and engine jobs are not hosted as a web application. HTTPS and an
+authenticated review application remain separate deployment work.
 
 ## Owned-account seed test
 
