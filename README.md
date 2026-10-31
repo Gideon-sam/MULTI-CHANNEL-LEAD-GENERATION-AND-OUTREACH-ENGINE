@@ -10,6 +10,8 @@ It discovers real creators, measures recent publishing activity, preserves sourc
 uncertain records to human review, prepares multi-channel outreach, and produces reproducible audit
 artifacts.
 
+LIVE LINK : http://incubrix-outreach-engine.eastasia.cloudapp.azure.com/
+
 > **Truthful status:** the repository and review tooling are operational. The research pool contains
 > 5,000 unique-name candidates. The user has attested to reviewing the first 4,720, but the
 > attestation does not replace missing evidence or a live-source recheck. Only rows that pass every
