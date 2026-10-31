@@ -62,6 +62,7 @@ def main() -> None:
             relative = path.relative_to(root)
             if (
                 "manual_review_5000" in relative.parts
+                or "records" in relative.parts
                 or "manual_review_5000_final/manual_review_queue_5000.json"
                 in relative.as_posix()
                 or (
