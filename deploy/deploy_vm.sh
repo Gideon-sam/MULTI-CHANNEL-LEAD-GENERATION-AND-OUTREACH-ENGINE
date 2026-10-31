@@ -31,4 +31,5 @@ sudo nginx -t
 sudo systemctl enable --now nginx
 sudo systemctl reload nginx
 
-printf 'Deployed %s at http://incubrix-longtail.eastasia.cloudapp.azure.com/\n' "$(git -C "${checkout}" rev-parse --short HEAD)"
+revision="$(sudo git -C "${checkout}" rev-parse --short HEAD)"
+printf 'Deployed %s at http://incubrix-longtail.eastasia.cloudapp.azure.com/\n' "${revision}"

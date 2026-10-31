@@ -1,7 +1,7 @@
 # IncuBrix Multi-Channel Lead Generation & Outreach Engine
 
 [![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-2563eb?style=flat-square)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/tests-104%20passing-087f73?style=flat-square)](#verification)
+[![Tests](https://img.shields.io/badge/tests-105%20passing-087f73?style=flat-square)](#verification)
 [![Evidence](https://img.shields.io/badge/evidence-gated-a96200?style=flat-square)](#qualification-contract)
 [![Deployment](https://img.shields.io/badge/Azure-live-7c3aed?style=flat-square)](https://incubrix-longtail.eastasia.cloudapp.azure.com/)
 
@@ -54,7 +54,7 @@ log or paste credentials into a workbook.
 | User-attested review rows | 4,720 |
 | Attested rows with all eight stored proof pairs | 1 |
 | Attested rows still missing one or more stored proof pairs | 4,719 |
-| Automated tests | 104 passing |
+| Automated tests | 105 passing |
 | User-rejected creators excluded from the pool | 2 |
 
 The 5,000 rows are a real discovery and research pool, not 5,000 automatically qualified leads.

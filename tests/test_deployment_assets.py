@@ -19,3 +19,8 @@ def test_nginx_profile_has_security_headers_and_health_endpoint():
     assert "Content-Security-Policy" in config
     assert "frame-ancestors 'none'" in config
     assert "location = /health.json" in config
+
+
+def test_deploy_script_reads_root_owned_checkout_through_sudo():
+    script = (ROOT / "deploy/deploy_vm.sh").read_text(encoding="utf-8")
+    assert 'sudo git -C "${checkout}" rev-parse --short HEAD' in script
