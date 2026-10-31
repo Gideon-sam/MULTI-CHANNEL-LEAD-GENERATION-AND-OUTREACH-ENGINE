@@ -16,7 +16,7 @@ The supplied PDF and workbook are the assessment specification. The user's reque
 | Launch plan | Generated `launch-kit.md` | Conditional plan; launch prerequisites remain open |
 | Workbook / CSV / code | Generated outputs and this project | Draft artifacts; validation governs readiness |
 | Two unedited videos | `docs/video-runbook.md` | Candidate recordings pending |
-| Private repository / shared folder | Local project | External sharing URL pending |
+| Private repository / shared folder | GitHub `main` pushed to `Gideon-sam/MULTI-CHANNEL-LEAD-GENERATION-AND-OUTREACH-ENGINE` | Confirm repository visibility and reviewer access before submission |
 | 5,000 leads, 250 Priority A, measured 5,000 refresh | Configurable targets and pipeline | Exceptional requirements not met |
 | Response-based channel recommendation | Measurement plan | No real creators contacted; no response data claimed |
 
