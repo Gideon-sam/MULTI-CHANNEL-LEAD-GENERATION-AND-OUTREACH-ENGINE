@@ -1,0 +1,19 @@
+{
+  "source": "output\\runs\\20261028T181110372830Z\\evidence_ledger.csv",
+  "population_rows": 45,
+  "checked_rows": 45,
+  "unique_urls": 2161,
+  "status_counts": {
+    "blocked_or_unavailable": 15,
+    "http_ok": 2139,
+    "unverified_stale_fallback": 5,
+    "not_found": 2
+  },
+  "http": {
+    "network_requests": 2185,
+    "cache_hits": 26,
+    "stale_fallbacks": 5,
+    "failures": 11
+  },
+  "note": "No source links rewritten. Not-found and blocked links require another public source or manual review. HTTP 200 does not certify a business contact."
+}

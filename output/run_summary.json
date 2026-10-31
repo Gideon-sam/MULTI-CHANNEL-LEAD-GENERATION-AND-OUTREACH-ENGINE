@@ -1,0 +1,19 @@
+{
+  "qualified": 0,
+  "pending_review": 2384,
+  "run_metrics": {
+    "target_leads": 2000,
+    "input_size": 10153,
+    "qualified_pool": 0,
+    "produced": 0,
+    "rejected": 7769,
+    "duplicates_removed": 0,
+    "pending_review": 2384,
+    "runtime_minutes": 36.91
+  },
+  "rejected": 7769,
+  "countries": {},
+  "channels": {},
+  "priorities": {},
+  "duplicates": 0
+}

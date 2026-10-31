@@ -1,0 +1,114 @@
+{
+  "passed": false,
+  "checks": [
+    {
+      "name": "minimum_leads",
+      "passed": false,
+      "value": 38,
+      "requirement": ">=2000"
+    },
+    {
+      "name": "unique_stable_ids",
+      "passed": true,
+      "value": 0,
+      "requirement": "0 duplicates"
+    },
+    {
+      "name": "unique_creator_and_contact",
+      "passed": true,
+      "value": 0,
+      "requirement": "0 duplicates"
+    },
+    {
+      "name": "complete_required_fields",
+      "passed": true,
+      "value": 0,
+      "requirement": "0 missing"
+    },
+    {
+      "name": "working_url_shape",
+      "passed": true,
+      "value": 0,
+      "requirement": "0 malformed URLs"
+    },
+    {
+      "name": "public_email_shape",
+      "passed": true,
+      "value": 0,
+      "requirement": "0 malformed emails"
+    },
+    {
+      "name": "activity_threshold",
+      "passed": true,
+      "value": 0,
+      "requirement": "0 failures"
+    },
+    {
+      "name": "country_evidence",
+      "passed": true,
+      "value": 0,
+      "requirement": "0 missing/weak"
+    },
+    {
+      "name": "evidence_freshness",
+      "passed": true,
+      "value": 0,
+      "requirement": "checked within 30 days"
+    },
+    {
+      "name": "qualified_status",
+      "passed": true,
+      "value": 0,
+      "requirement": "all Qualified"
+    },
+    {
+      "name": "creator_specific_review",
+      "passed": true,
+      "value": 0,
+      "requirement": "all creator-specific evidence reviewed or deterministically verified"
+    },
+    {
+      "name": "approved_country_share",
+      "passed": true,
+      "value": 1.0,
+      "requirement": ">=0.80"
+    },
+    {
+      "name": "country_count",
+      "passed": true,
+      "value": 4,
+      "requirement": ">=3"
+    },
+    {
+      "name": "country_cap",
+      "passed": false,
+      "value": 0.7894736842105263,
+      "requirement": "<=0.6"
+    },
+    {
+      "name": "priority_a_count",
+      "passed": true,
+      "value": 25,
+      "requirement": ">=25"
+    },
+    {
+      "name": "priority_a_sequences",
+      "passed": true,
+      "value": 25,
+      "requirement": "all Priority A"
+    }
+  ],
+  "countries": {
+    "CA": 2,
+    "US": 30,
+    "GB": 5,
+    "AU": 1
+  },
+  "bad_urls": [],
+  "bad_contacts": [],
+  "bad_activity": [],
+  "bad_country_evidence": [],
+  "stale_checks": [],
+  "bad_status": [],
+  "missing": []
+}

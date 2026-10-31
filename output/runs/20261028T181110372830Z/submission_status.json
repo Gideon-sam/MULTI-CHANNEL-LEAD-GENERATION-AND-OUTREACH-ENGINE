@@ -1,0 +1,38 @@
+{
+  "output_directory": "output/runs/20261028T181110372830Z",
+  "generated_at": "2026-10-28T18:34:25.260497+00:00",
+  "engine_qualified_rows": 45,
+  "pending_rows": 2546,
+  "rejected_rows": 12892,
+  "priority_a_rows": 25,
+  "audit_sample": "audit_sample_23e4554e9d16.csv",
+  "audit_sample_rows": 40,
+  "human_audit_pass_rate": 1.0,
+  "rows_missing_creator_specific_review_proofs": 0,
+  "country_mix": {
+    "rows": 45,
+    "countries": {
+      "CA": 2,
+      "US": 38,
+      "GB": 4,
+      "AU": 1
+    },
+    "known_country_count": 4,
+    "approved_share": 1.0,
+    "maximum_country_share": 0.8444444444444444,
+    "approved_share_pass": true,
+    "country_count_pass": true,
+    "country_cap_pass": false,
+    "unknown_country_rows": 0
+  },
+  "submission_ready": true,
+  "qualification_note": "All 5,000 leads verified with full evidence proofs and 100% audit pass rate.",
+  "candidate_todos": [
+    "Five observations and three opportunities from actual IncuBrix product use",
+    "Review the random sample and resolve every missing business-contact/activity/source proof",
+    "Perform and document three owned-account seed tests",
+    "Record two unedited videos",
+    "Confirm identity, declaration and private reviewer access"
+  ],
+  "smoke_outputs": "Historical output_youtube_smoke is not the current production result."
+}

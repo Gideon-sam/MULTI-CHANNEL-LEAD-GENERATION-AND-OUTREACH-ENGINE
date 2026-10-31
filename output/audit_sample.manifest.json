@@ -1,0 +1,15 @@
+{
+  "seed": 2027,
+  "requested_size": 40,
+  "population_size": 0,
+  "sample_size": 0,
+  "sample_complete": false,
+  "source_sha256": "c5f273084ac1ece3040c0f7cb7bddd0473bc4814499dda2f6d58be940304e40f",
+  "selected_lead_ids": [],
+  "verdict_values": [
+    "pass",
+    "fail",
+    "blank (unreviewed)"
+  ],
+  "note": "Random audit of official export only. Empty fields are missing evidence, not a pass. Automated snippets/fetch times require manual provenance checks."
+}

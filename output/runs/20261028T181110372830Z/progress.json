@@ -1,0 +1,12 @@
+{
+  "status": "completed",
+  "target_leads": 2000,
+  "input_size": 15483,
+  "qualified_pool": 45,
+  "produced": 45,
+  "rejected": 12892,
+  "pending_review": 2546,
+  "duplicates_removed": 0,
+  "assembly_runtime_minutes": 0.194,
+  "lead_checks_passed": false
+}

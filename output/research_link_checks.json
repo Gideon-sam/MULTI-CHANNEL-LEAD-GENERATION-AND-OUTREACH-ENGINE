@@ -1,0 +1,18 @@
+{
+  "source": "output\\review_queue.csv",
+  "population_rows": 2384,
+  "checked_rows": 40,
+  "unique_urls": 136,
+  "status_counts": {
+    "http_ok": 106,
+    "blocked_or_unavailable": 28,
+    "http_error": 2
+  },
+  "http": {
+    "network_requests": 254,
+    "cache_hits": 14,
+    "stale_fallbacks": 0,
+    "failures": 27
+  },
+  "note": "No source links rewritten. Not-found and blocked links require another public source or manual review. HTTP 200 does not certify a business contact."
+}

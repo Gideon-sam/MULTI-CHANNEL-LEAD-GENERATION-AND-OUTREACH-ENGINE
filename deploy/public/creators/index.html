@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Creator directory · IncuBrix Growth Engine</title>
+  <link rel="stylesheet" href="directory.css">
+  <script src="directory.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to creator directory</a>
+  <aside class="sidebar">
+    <a class="brand" href="../"><span class="logo">ib.</span><span>IncuBrix<small>GROWTH ENGINE</small></span></a>
+    <p class="nav-label">WORKSPACE</p>
+    <a class="nav-item" href="../">◈ &nbsp; Project overview</a>
+    <a class="nav-item selected" href="./" aria-current="page">▦ &nbsp; Creator directory</a>
+    <a class="nav-item" href="https://github.com/Gideon-sam/MULTI-CHANNEL-LEAD-GENERATION-AND-OUTREACH-ENGINE" target="_blank" rel="noopener noreferrer">↗ &nbsp; Code &amp; documentation</a>
+    <div class="sidebar-note"><span class="dot"></span><strong>Evidence before outreach</strong><p>Trace each creator to a public source. Read the evidence before using a contact.</p></div>
+    <div class="sidebar-bottom">Growth Engineer · Option 1<br>Public research workspace</div>
+  </aside>
+  <div class="app">
+    <header class="topbar"><span class="breadcrumb">Workspace <span>/</span> <strong>Creator directory</strong></span><button id="theme" class="button quiet" aria-label="Switch color theme">◐ Theme</button></header>
+    <main id="workspace">
+      <div class="heading"><div><p class="eyebrow">DISCOVER · UNDERSTAND · VERIFY</p><h1>Meet your creator pipeline.</h1><p class="intro">Every creator, source and fit reason in one clear workspace.</p></div><button id="export" class="button primary" disabled>↓ Export filtered CSV</button></div>
+      <div id="error" class="alert error" role="alert" hidden><span id="error-text"></span><button class="button" id="retry">Try again</button></div>
+      <section class="metrics" aria-label="Dataset totals">
+        <article><span>RESEARCH CANDIDATES</span><strong id="total">—</strong><small>All records in this workbook</small></article>
+        <article><span>USER APPROVALS</span><strong id="approved">—</strong><small>Recorded human decisions</small></article>
+        <article><span>EVIDENCE PAIRS COMPLETE</span><strong id="proof-complete">—</strong><small>8 stored pairs; live recheck required</small></article>
+        <article><span>ACTIVITY THRESHOLD MET</span><strong id="activity-total">—</strong><small>At the recorded collection date</small></article>
+      </section>
+      <div class="alert"><span class="info-icon">i</span><div><strong>Understand what each status means.</strong> User approvals are recorded decisions. Stored proof pairs and past engine findings appear separately; final qualification requires a fresh source check. Country and contact fields may still be research hints.</div></div>
+      <section class="roster" aria-labelledby="roster-title">
+        <div class="roster-heading"><div><h2 id="roster-title">Creator directory</h2><p id="source-summary">Loading the research workbook…</p></div><span class="tag">Public sources</span></div>
+        <form id="filters" autocomplete="off">
+          <label class="search">Search creators<input id="search" type="search" placeholder="Name, show, ID or business contact…"></label>
+          <label>Platform<select id="platform"><option value="">All platforms</option><option>YouTube</option><option>Podcast</option></select></label>
+          <label>User decision<select id="verdict"><option value="">All decisions</option><option value="Approve">User approved</option><option value="Pending">Awaiting review</option><option value="Reject">User rejected</option></select></label>
+          <label>Country hint<select id="country"><option value="">All countries</option><option value="unset">Not recorded</option></select></label>
+          <label>Evidence<select id="proof"><option value="">All proof states</option><option value="complete">All 8 pairs stored</option><option value="missing">Missing proof pairs</option></select></label>
+          <label>Missing check<select id="missing"><option value="">Any check</option></select></label>
+          <label>Sort<select id="sort"><option value="rank">Review rank</option><option value="proof">Most evidence</option><option value="name">Creator name</option><option value="recent">Latest content</option><option value="activity">Most activity</option></select></label>
+          <button class="button quiet" id="clear" type="button">Reset</button>
+        </form>
+        <div class="result-line"><span id="count" role="status" aria-live="polite">Loading creators…</span><label class="page-size">Rows <select id="page-size"><option>25</option><option selected>50</option><option>100</option></select></label></div>
+        <div class="table-scroll"><table><thead><tr><th>Creator &amp; platform</th><th>User decision</th><th>Evidence</th><th>Publishing activity</th><th>Country / contact</th><th><span class="sr-only">Details</span></th></tr></thead><tbody id="rows"><tr><td colspan="6" class="empty">Loading the creator directory…</td></tr></tbody></table></div>
+        <div class="pagination"><span id="page-label">Page —</span><div><button class="button" id="previous" disabled>← Previous</button><button class="button" id="next" disabled>Next →</button></div></div>
+      </section>
+      <footer><p id="updated"></p><p>Evidence collection dates are historical. No messages are sent from this website.</p></footer>
+    </main>
+  </div>
+  <dialog id="detail" aria-labelledby="detail-title">
+    <div class="detail-header"><div><p class="eyebrow">CREATOR RESEARCH FILE</p><h2 id="detail-title">Loading…</h2><p id="detail-subtitle"></p></div><button class="button" id="close" aria-label="Close creator details">✕ Close</button></div>
+    <div id="detail-body" class="detail-body"></div>
+  </dialog>
+</body>
+</html>

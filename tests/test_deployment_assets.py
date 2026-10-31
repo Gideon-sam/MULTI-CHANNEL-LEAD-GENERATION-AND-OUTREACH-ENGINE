@@ -8,7 +8,7 @@ def test_public_overview_is_interactive_and_contains_no_creator_contacts():
     assert "IncuBrix Growth Engine" in html
     assert 'id="theme"' in html
     assert "4,720" in html and "5,000" in html
-    assert "Public overview contains no creator contact data" in html
+    assert 'href="creators/"' in html
     assert "@gmail.com" not in html
     assert "@student.tce.edu" not in html
 

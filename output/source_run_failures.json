@@ -1,0 +1,9 @@
+{
+  "failures": [],
+  "requested_sources": [
+    "apple",
+    "podcastindex",
+    "youtube"
+  ],
+  "youtube_skipped_missing_key": false
+}

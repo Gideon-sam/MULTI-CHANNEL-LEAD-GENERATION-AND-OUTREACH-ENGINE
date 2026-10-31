@@ -1,0 +1,14 @@
+﻿reason,source,country,count
+activity_threshold_not_met,Apple Podcasts / publisher RSS,Unknown,4460
+content_not_mainly_english,Apple Podcasts / publisher RSS,Unknown,373
+feed_fetch_failed:ConnectError,Apple Podcasts / publisher RSS,Unknown,3
+feed_fetch_failed:HTTPStatusError,Apple Podcasts / publisher RSS,Unknown,98
+feed_fetch_failed:ReadError,Apple Podcasts / publisher RSS,Unknown,1
+feed_fetch_failed:ReadTimeout,Apple Podcasts / publisher RSS,Unknown,55
+feed_fetch_failed:RemoteProtocolError,Apple Podcasts / publisher RSS,Unknown,8
+feed_fetch_failed:SSLError,Apple Podcasts / publisher RSS,Unknown,4
+feed_fetch_failed:gaierror,Apple Podcasts / publisher RSS,Unknown,1
+invalid_or_empty_feed,Apple Podcasts / publisher RSS,Unknown,2
+no_dated_public_episodes,Apple Podcasts / publisher RSS,Unknown,1516
+not_clearly_creator_led,Apple Podcasts / publisher RSS,Unknown,1245
+unexpected_error:TimeoutError,Apple Podcasts / publisher RSS,Unknown,3

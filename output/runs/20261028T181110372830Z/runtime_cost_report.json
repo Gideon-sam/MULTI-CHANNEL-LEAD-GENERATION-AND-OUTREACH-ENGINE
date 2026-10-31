@@ -1,0 +1,83 @@
+{
+  "source_runs": [
+    {
+      "source_directory": "output_sources\\apple",
+      "metrics": {
+        "target_leads": 2000,
+        "input_size": 12000,
+        "qualified_pool": 0,
+        "produced": 0,
+        "rejected": 9511,
+        "duplicates_removed": 0,
+        "pending_review": 2489,
+        "runtime_minutes": 36.59
+      },
+      "http": {
+        "network_requests": 2979,
+        "cache_hits": 19686,
+        "stale_fallbacks": 0,
+        "failures": 741
+      },
+      "api": {}
+    },
+    {
+      "source_directory": "output_sources\\podcastindex",
+      "metrics": {
+        "target_leads": 2000,
+        "input_size": 800,
+        "qualified_pool": 0,
+        "produced": 0,
+        "rejected": 617,
+        "duplicates_removed": 0,
+        "pending_review": 183,
+        "runtime_minutes": 11.86
+      },
+      "http": {
+        "network_requests": 1211,
+        "cache_hits": 1034,
+        "stale_fallbacks": 0,
+        "failures": 146
+      },
+      "api": {}
+    },
+    {
+      "source_directory": "output_sources\\youtube",
+      "metrics": {
+        "target_leads": 2000,
+        "input_size": 3097,
+        "qualified_pool": 45,
+        "produced": 45,
+        "rejected": 3035,
+        "duplicates_removed": 0,
+        "pending_review": 17,
+        "runtime_minutes": 10.41,
+        "youtube_api_requests": 3964,
+        "youtube_api_cache_hits": 1982,
+        "youtube_network_attempts": 3981
+      },
+      "http": {
+        "network_requests": 0,
+        "cache_hits": 0,
+        "stale_fallbacks": 0,
+        "failures": 0
+      },
+      "api": {
+        "network_attempts_by_endpoint": {
+          "search": 35,
+          "channels": 124,
+          "playlistItems": 2093,
+          "videos": 1729
+        },
+        "successful_requests": 3964,
+        "cache_hits": 1982,
+        "actual_billed_cost": null,
+        "provider_quota_usage": null,
+        "note": "Actual client request counts. Provider billing/quota measurements require console evidence; no estimated cost is reported."
+      }
+    }
+  ],
+  "actual_billed_cost": null,
+  "cost_per_qualified_lead": null,
+  "provider_quota_usage": null,
+  "note": "Runtime/request counts are copied from measured source run artifacts. Old estimated quota-unit fields are excluded. Billing and provider quota usage require external account evidence. No 5,000-verified-lead refresh claim."
+}

@@ -1,0 +1,11 @@
+{
+  "official_leads": 45,
+  "priority_a_count": 25,
+  "required_priority_a_count": 25,
+  "has_25_priority_a": true,
+  "best_25_marking_matches": true,
+  "priority_a_message_issues": [],
+  "segment_channel_template_count": 9,
+  "templates_are_not_completed_seed_tests": true,
+  "messages_sent": 0
+}

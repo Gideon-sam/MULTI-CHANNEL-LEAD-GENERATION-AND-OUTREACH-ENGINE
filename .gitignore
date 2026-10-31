@@ -1,5 +1,6 @@
 .env
 ~$*.xlsx
+powershell.cmd
 .venv/
 .venv_verify/
 __pycache__/
@@ -17,8 +18,26 @@ config/*.local.json
 config/*.json.bak
 src/*.egg-info/
 
-# Generated deliverables and private research stay local; the packaging script includes them.
-output/
+# Deliverables are tracked; exclude oversized raw dumps and queues to keep git fast
+output/**/rejections.csv
+output/**/manual_review_queue_*.json
+output/**/auto_enriched_queue.json
+output/**/research_queue.json
+output/**/review_queue.json
+output/**/review_queue.csv
+output/**/audit_dashboard.html
+output/**/all_discovered_inputs.csv
+output/**/proof_hints.csv
+output/**/link_checks.csv
+output/runs/*/expanded_review_*
+output/runs/*/rejection_report.json
+output/runs/20261028T13*
+output/public_directory/
+output/runs/*/auto_enriched_*
+output/runs/*/evidence_recovery_*
+output/runs/*/manual_review_*
+output/runs/*/discovery_increment_*
+output/runs/*/research_increment_*
 output_preflight/
 output_additional/
 dist/
@@ -30,4 +49,6 @@ state_*/
 verification/*
 !verification/clean_clone_report.json
 inputs/api.txt
+.deploy-venv/
+.published/
 

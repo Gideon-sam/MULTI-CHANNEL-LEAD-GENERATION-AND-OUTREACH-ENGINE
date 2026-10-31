@@ -1,0 +1,21 @@
+{
+  "source_run": "output\\runs\\20261028T181110372830Z",
+  "selected_candidates": 145,
+  "candidates_with_pages": 127,
+  "page_records": 232,
+  "statuses": {
+    "http_error": 16,
+    "fetched_requires_review": 195,
+    "blocked_or_unavailable": 21
+  },
+  "qualification_changes": 0,
+  "runtime_seconds": 133.24,
+  "http": {
+    "network_requests": 461,
+    "cache_hits": 20,
+    "stale_fallbacks": 0,
+    "failures": 45
+  },
+  "actual_billed_cost": null,
+  "note": "Exact page excerpts collected for review. Website ownership, contact purpose/activity, country and need are not inferred from keyword matches."
+}
