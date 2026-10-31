@@ -11,6 +11,7 @@ from pathlib import Path
 import openpyxl
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.worksheet.table import Table, TableStyleInfo
 
 from .audit_support import read_rows
 from .files import write_text
@@ -145,6 +146,20 @@ def _style_sheet(sheet, freeze: str = "A2") -> None:
         cell.alignment = Alignment(wrap_text=True, vertical="top")
 
 
+def _table(sheet, name: str, color: str = "TableStyleMedium2") -> None:
+    if sheet.max_row < 2 or sheet.max_column < 1:
+        return
+    table = Table(displayName=name, ref=sheet.dimensions)
+    table.tableStyleInfo = TableStyleInfo(
+        name=color,
+        showFirstColumn=False,
+        showLastColumn=False,
+        showRowStripes=True,
+        showColumnStripes=False,
+    )
+    sheet.add_table(table)
+
+
 def _finish_workbook(path: Path, index: list[dict], counts: dict) -> None:
     book = openpyxl.load_workbook(path)
     summary = book.create_sheet("REVIEW_DASHBOARD", 0)
@@ -167,6 +182,8 @@ def _finish_workbook(path: Path, index: list[dict], counts: dict) -> None:
     summary.append(["Audit rule", "This workbook is a candidate review pool. It is not the final independent audit. Generate the fixed-seed 40-row audit from the final qualified leads.csv."])
     summary.column_dimensions["A"].width = 48
     summary.column_dimensions["B"].width = 120
+    summary.sheet_properties.tabColor = "0F766E"
+    summary.row_dimensions[1].height = 34
     for row in summary.iter_rows():
         for cell in row:
             cell.alignment = Alignment(wrap_text=True, vertical="top")
@@ -192,6 +209,17 @@ def _finish_workbook(path: Path, index: list[dict], counts: dict) -> None:
     for column, field in enumerate(fields, 1):
         sheet.column_dimensions[sheet.cell(1, column).column_letter].width = 45 if field.endswith("_url") else 24
     _style_sheet(sheet, "D2")
+    sheet.sheet_properties.tabColor = "2563EB"
+    _table(sheet, "ReviewIndex5000")
+    for name, table_name, tab_color in (
+        ("Candidates", "CreatorCandidates5000", "0F766E"),
+        ("Reviews", "CreatorReviews5000", "D97706"),
+    ):
+        data_sheet = book[name]
+        data_sheet.sheet_properties.tabColor = tab_color
+        data_sheet.sheet_view.showGridLines = False
+        data_sheet.row_dimensions[1].height = 34
+        _table(data_sheet, table_name)
     book.active = 0
     book.properties.title = "IncuBrix 5,000 creator manual evidence review"
     book.save(path)

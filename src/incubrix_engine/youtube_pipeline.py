@@ -17,6 +17,7 @@ from .launch_kit import write_launch_kit
 from .models import Lead
 from .outreach import write_outreach
 from .pipeline import PipelineResult, _dedupe_leads, _select_final
+from .review import approve_candidate, load_reviews
 from .sources.youtube import (
     YouTubeApi,
     api_key_from_environment,
@@ -29,13 +30,30 @@ from .validation import validate
 from .workbook import build_workbook
 
 
+def _latest_snapshot_date(snapshots: dict[str, dict]) -> str:
+    return max(
+        (
+            str(snapshot.get("retrieved_at", ""))
+            for snapshot in snapshots.values()
+            if snapshot.get("retrieved_at")
+        ),
+        default="",
+    )
+
+
 async def run_youtube_pipeline(
-    root: Path, config: Config, logger: logging.Logger, *, refresh: bool = False
+    root: Path,
+    config: Config,
+    logger: logging.Logger,
+    *,
+    refresh: bool = False,
+    reviewed_only: bool = False,
 ) -> PipelineResult:
     started = time.perf_counter()
     config.ensure_directories(root)
     output_dir = root / config.output_dir
     store = LeadStore(root / config.state_dir / "leads.sqlite3")
+    reviews = load_reviews(root / config.review_file)
     try:
         async with (
             YouTubeApi(
@@ -55,6 +73,14 @@ async def run_youtube_pipeline(
         ):
             logger.info("youtube_discovery_started")
             candidates = await discover_channels(config, api)
+            if reviewed_only:
+                candidates = [
+                    candidate
+                    for candidate in candidates
+                    if f"youtube-channel:{candidate.channel_id}" in reviews
+                ]
+                if not candidates:
+                    raise ValueError("No reviewed YouTube channels were found in discovery")
             with (output_dir / "discovered_inputs.csv").open(
                 "w", encoding="utf-8-sig", newline=""
             ) as handle:
@@ -107,6 +133,10 @@ async def run_youtube_pipeline(
                         for video in activity
                     },
                 }
+                lead.metadata["feed_fetched_at"] = _latest_snapshot_date(
+                    lead.metadata["evidence_snapshots"]
+                )
+                lead.metadata["feed_stale"] = False
                 lead.metadata["source_description"] = candidate.description
                 lead.metadata["verification_limits"] = [
                     "Identity/commercial signals use existing heuristics",
@@ -119,6 +149,14 @@ async def run_youtube_pipeline(
                 )
                 for field, value in safe_drafts(asdict(lead)).items():
                     setattr(lead, field, value)
+                if lead.candidate_status == "Needs review":
+                    await approve_candidate(
+                        lead,
+                        reviews.get(lead.stable_creator_id),
+                        config,
+                        http,
+                        refresh,
+                    )
                 rows.append(lead)
             from .manual_decisions import apply_rejection, load_decisions
             decisions = load_decisions(root / "config/review_decisions.json")

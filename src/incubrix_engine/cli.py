@@ -121,9 +121,17 @@ def main() -> None:
     logger = configure_logging(root / config.log_dir / f"run-{timestamp}.jsonl", args.verbose)
     try:
         if args.source == "youtube":
-            if args.input or args.reviewed_only:
-                raise ValueError("--input and --reviewed-only are Apple workflow options")
-            result = asyncio.run(run_youtube_pipeline(root, config, logger, refresh=args.refresh))
+            if args.input:
+                raise ValueError("--input is an Apple workflow option")
+            result = asyncio.run(
+                run_youtube_pipeline(
+                    root,
+                    config,
+                    logger,
+                    refresh=args.refresh,
+                    reviewed_only=args.reviewed_only,
+                )
+            )
         else:
             result = asyncio.run(
                 run_pipeline(

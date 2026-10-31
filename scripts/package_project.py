@@ -20,6 +20,8 @@ def main() -> None:
         "REVIEW_3000.md",
         "MANUAL_REVIEW_START.xlsx",
         "MANUAL_REVIEW_RECORDED_20261030.xlsx",
+        "IncuBrix_Manual_Review_5000.xlsx",
+        "MANUAL_REVIEW_5000.md",
         "Run-Project.ps1",
         "Run-Submission.ps1",
         "pyproject.toml",
@@ -59,7 +61,24 @@ def main() -> None:
                 continue
             relative = path.relative_to(root)
             if (
-                path.name.endswith(".local.json")
+                "manual_review_5000" in relative.parts
+                or "manual_review_5000_final/manual_review_queue_5000.json"
+                in relative.as_posix()
+                or (
+                    {"evidence_recovery_20261030", "research_increment_20261030"}
+                    & set(relative.parts)
+                    and (
+                        "records" in relative.parts
+                        or relative.name
+                        in {
+                            "auto_enriched_queue.json",
+                            "Master_Auto_Enriched.xlsx",
+                            "proof_hints.csv",
+                            "link_checks.csv",
+                        }
+                    )
+                )
+                or path.name.endswith(".local.json")
                 or path.name.endswith(".json.bak")
                 or path.suffix in {".sqlite3", ".db", ".pyc"}
                 or "state" in relative.parts

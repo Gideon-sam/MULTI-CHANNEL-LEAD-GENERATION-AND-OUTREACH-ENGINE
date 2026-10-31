@@ -1,6 +1,8 @@
 # IncuBrix reviewer start here
 
-Open **MANUAL_REVIEW_RECORDED_20261030.xlsx**, then **REVIEW_SUMMARY** for your latest decisions.
+For the full target, open **IncuBrix_Manual_Review_5000.xlsx**, then **REVIEW_DASHBOARD**.
+Read **MANUAL_REVIEW_5000.md** before editing. For your earlier 40-row work, open
+**MANUAL_REVIEW_RECORDED_20261030.xlsx**, then **REVIEW_SUMMARY**.
 Read [the next review steps](docs/review-follow-up-20261030.md). Creators 23 and 31 are rejected;
 your freshness/link approvals are recorded. Other missing evidence still needs resolution.
 The target is **5,000 qualified creators**, which has not been achieved.
