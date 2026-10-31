@@ -1,10 +1,10 @@
 {
-  "checked_at": "2026-10-30T17:33:59.837190+00:00",
-  "git_commit": "966190c77774c081191a62616575b88869076ca4",
-  "clone_directory": "C:\\curl\\bin\\incubrix-clean-clone-sq2vmv2z\\project",
+  "checked_at": "2026-10-31T12:20:43.453736+00:00",
+  "git_commit": "7d160fd88a5ba83876403383187095f9ee12a23f",
+  "clone_directory": "C:\\curl\\bin\\incubrix-clean-clone-8h7894iy\\project",
   "command": "powershell -NoProfile -ExecutionPolicy Bypass -File .\\Run-Submission.ps1 -Mode smoke",
   "exit_code": 0,
-  "runtime_seconds": 141.83,
+  "runtime_seconds": 128.3,
   "passed": true,
   "run_evidence": {
     "normal": {
@@ -16,7 +16,7 @@
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 2,
-        "runtime_minutes": 0.16
+        "runtime_minutes": 0.12
       },
       "http": {
         "network_requests": 11,
@@ -47,7 +47,7 @@
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 2,
-        "runtime_minutes": 0.09
+        "runtime_minutes": 0.05
       },
       "http": {
         "network_requests": 2,
@@ -78,7 +78,7 @@
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 4,
-        "runtime_minutes": 0.14
+        "runtime_minutes": 0.1
       },
       "http": {
         "network_requests": 15,
@@ -111,7 +111,7 @@
         "rejected": 2,
         "duplicates_removed": 0,
         "pending_review": 2,
-        "runtime_minutes": 0.11
+        "runtime_minutes": 0.08
       },
       "http": {
         "network_requests": 10,
