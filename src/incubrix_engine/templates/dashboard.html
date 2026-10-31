@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>IncuBrix · Evidence Desk</title>
+  <style>
+    :root {
+      --navy: #102a43;
+      --navy-2: #163a59;
+      --teal: #087f73;
+      --mint: #dff7f1;
+      --amber: #a96200;
+      --amber-bg: #fff4d6;
+      --red: #b42318;
+      --red-bg: #fee4e2;
+      --ink: #172b3a;
+      --muted: #607582;
+      --surface: #fff;
+      --canvas: #f3f7f8;
+      --line: #d7e2e6;
+      --shadow: 0 12px 32px rgba(16, 42, 67, .08);
+      --radius: 16px;
+    }
+    [data-theme="dark"] {
+      --navy: #071b2b;
+      --navy-2: #0c2b40;
+      --teal: #58d5c7;
+      --mint: #123d3a;
+      --amber: #ffc766;
+      --amber-bg: #493817;
+      --red: #ff9a92;
+      --red-bg: #4a2526;
+      --ink: #eef7f8;
+      --muted: #a9bec6;
+      --surface: #102630;
+      --canvas: #071a22;
+      --line: #29434d;
+      --shadow: 0 18px 40px rgba(0, 0, 0, .26);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    button, input, select { font: inherit; }
+    button, a, input, select { outline-offset: 3px; }
+    a { color: var(--teal); text-underline-offset: 3px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(120deg, var(--navy), var(--navy-2) 58%, #0b625e);
+      color: #fff;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -120px;
+      bottom: -260px;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2dd4bf55, #2dd4bf00 68%);
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 1440px; margin: auto; padding: 32px 28px 76px; }
+    .topbar, .workspace-title, .progress-head, .table-meta, .pager, .dialog-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 780; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #5eead4, #14b8a6);
+      color: #073b3a;
+      font-weight: 900;
+      box-shadow: 0 8px 24px #071a2255;
+    }
+    .eyebrow { margin: 44px 0 10px; color: #9ee9df; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .hero h1 { max-width: 850px; margin: 0; font-size: clamp(36px, 5vw, 64px); line-height: 1.02; letter-spacing: -.055em; }
+    .hero-copy { max-width: 760px; margin: 20px 0 0; color: #d3e7ea; font-size: 17px; }
+    .theme-toggle { border: 1px solid #ffffff45; background: #ffffff12; color: #fff; padding: 9px 13px; border-radius: 999px; cursor: pointer; }
+    .theme-toggle:hover { background: #ffffff22; }
+    .main { position: relative; z-index: 2; max-width: 1440px; margin: -46px auto 0; padding: 0 28px 40px; }
+    .status-panel { display: grid; grid-template-columns: minmax(280px, 1.3fr) repeat(4, minmax(150px, 1fr)); gap: 14px; }
+    .progress-card, .metric, .workspace { border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); }
+    .progress-card, .metric { border-radius: var(--radius); padding: 20px; }
+    .metric-label, .progress-label { display: block; color: var(--muted); font-size: 11px; font-weight: 780; letter-spacing: .08em; text-transform: uppercase; }
+    .metric strong { display: block; margin-top: 7px; font-size: 30px; line-height: 1.1; letter-spacing: -.03em; }
+    .metric small, .progress-note { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+    .progress-head { align-items: end; }
+    .progress-head strong { font-size: 23px; }
+    .track { height: 10px; margin: 14px 0 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+    .fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--teal), #35d0bd); transition: width .45s ease; }
+    .notice { display: flex; gap: 13px; align-items: flex-start; margin: 22px 0; padding: 16px 18px; border: 1px solid #e8c279; border-radius: 14px; background: var(--amber-bg); }
+    .notice-icon { flex: 0 0 auto; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--amber); color: #fff; font-weight: 800; }
+    .workspace { border-radius: 20px; overflow: hidden; }
+    .workspace-head { padding: 22px 22px 0; }
+    .workspace-title { align-items: flex-start; }
+    .workspace h2 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+    .workspace-title p { margin: 5px 0 0; color: var(--muted); }
+    .download-group, .detail-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .download, .detail-links a { display: inline-flex; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font-size: 13px; font-weight: 700; text-decoration: none; }
+    .download:hover, .detail-links a:hover { border-color: var(--teal); background: var(--mint); }
+    .filters { display: grid; grid-template-columns: minmax(260px, 1.5fr) repeat(4, minmax(145px, .6fr)); gap: 10px; margin-top: 20px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--canvas); }
+    .field label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    input, select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); }
+    input:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 18%, transparent); }
+    .table-meta { padding: 16px 4px 12px; color: var(--muted); font-size: 13px; }
+    .table-wrap { overflow: auto; border-top: 1px solid var(--line); }
+    table { width: 100%; min-width: 1040px; border-collapse: separate; border-spacing: 0; }
+    th, td { padding: 15px 17px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { position: sticky; top: 0; z-index: 1; background: var(--surface); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: color-mix(in srgb, var(--mint) 42%, var(--surface)); }
+    .creator { max-width: 340px; font-weight: 760; }
+    .sub { display: block; margin-top: 4px; color: var(--muted); font-size: 12px; font-weight: 450; }
+    .platform { display: inline-flex; margin-top: 7px; padding: 2px 7px; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); font-size: 11px; }
+    .status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; background: var(--amber-bg); color: var(--amber); font-size: 12px; font-weight: 750; white-space: nowrap; }
+    .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .approved { background: var(--mint); color: var(--teal); }
+    .rejected { background: var(--red-bg); color: var(--red); }
+    .activity strong { display: block; }
+    .activity span { color: var(--muted); font-size: 12px; }
+    .inspect { border: 1px solid color-mix(in srgb, var(--teal) 38%, var(--line)); border-radius: 9px; background: var(--mint); color: var(--teal); padding: 8px 12px; font-weight: 760; cursor: pointer; }
+    .inspect:hover { filter: brightness(.97); transform: translateY(-1px); }
+    .empty { padding: 50px; text-align: center; color: var(--muted); }
+    .pager { padding: 16px 22px; }
+    .pager-actions { display: flex; gap: 8px; }
+    .pager button, .dialog-close { border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); padding: 8px 12px; cursor: pointer; }
+    .pager button:hover, .dialog-close:hover { border-color: var(--teal); }
+    .pager button:disabled { opacity: .38; cursor: not-allowed; }
+    .footer { max-width: 1440px; margin: auto; padding: 26px 28px 44px; color: var(--muted); font-size: 12px; }
+    .footer strong { color: var(--ink); }
+    dialog { width: min(980px, calc(100vw - 30px)); max-height: 90vh; padding: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--ink); box-shadow: 0 30px 80px #06192366; }
+    dialog::backdrop { background: #071d2caa; backdrop-filter: blur(5px); }
+    .dialog-head { position: sticky; top: 0; z-index: 2; align-items: flex-start; padding: 22px 24px; border-bottom: 1px solid var(--line); background: var(--surface); }
+    .dialog-head h2 { margin: 0; font-size: 24px; }
+    .dialog-body { padding: 22px 24px; }
+    .detail-links { margin: 16px 0; }
+    .detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
+    .detail-item { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--canvas); }
+    .detail-item span { display: block; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .07em; }
+    .detail-item strong { display: block; margin-top: 4px; overflow-wrap: anywhere; }
+    .message { padding: 16px; border-left: 4px solid var(--teal); border-radius: 8px; background: var(--mint); }
+    details { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; }
+    summary { padding: 12px 14px; cursor: pointer; font-weight: 700; }
+    pre { max-height: 36vh; margin: 0; padding: 15px; overflow: auto; border-top: 1px solid var(--line); background: var(--canvas); font: 12px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
+    @media(max-width:1100px) {
+      .status-panel { grid-template-columns: repeat(2, 1fr); }
+      .progress-card { grid-column: 1 / -1; }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .search-field { grid-column: 1 / -1; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media(max-width:650px) {
+      .hero-inner { padding: 24px 18px 66px; }
+      .main { padding: 0 12px 28px; }
+      .status-panel { grid-template-columns: 1fr 1fr; }
+      .workspace-head { padding: 17px 14px 0; }
+      .workspace-title, .table-meta { display: block; }
+      .download-group { margin-top: 14px; }
+      .filters { grid-template-columns: 1fr; }
+      .search-field { grid-column: auto; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="topbar">
+        <div class="brand"><span class="brand-mark">IB</span><span>IncuBrix Evidence Desk</span></div>
+        <button class="theme-toggle" id="theme" type="button">◐ Theme</button>
+      </div>
+      <p class="eyebrow">Growth operations · evidence before outreach</p>
+      <h1>Creator research you can explain, trace and audit.</h1>
+      <p class="hero-copy">Review qualification state, inspect public evidence, and keep unverified candidates clearly separated from approved leads.</p>
+    </div>
+  </header>
+  <main class="main">
+    <section class="status-panel" aria-label="Run status">
+      <article class="progress-card">
+        <div class="progress-head"><div><span class="progress-label">Qualified progress</span><strong id="progress-value">0 / 0</strong></div><strong id="progress-percent">0%</strong></div>
+        <div class="track"><div class="fill" id="progress-fill"></div></div>
+        <div class="progress-note" id="progress-note"></div>
+      </article>
+      <div id="cards" style="display: contents"></div>
+    </section>
+    <div class="notice"><span class="notice-icon">!</span><span id="notice-text"></span></div>
+    <section class="workspace">
+      <div class="workspace-head">
+        <div class="workspace-title">
+          <div><h2>Evidence roster</h2><p>Search and filter every record in this run. Open a row to inspect its source trail.</p></div>
+          <div class="download-group"><a class="download" href="leads.csv" download>Qualified CSV</a><a class="download" href="review_queue.csv" download>Review queue</a><a class="download" href="Human_Review.xlsx" download>Review workbook</a></div>
+        </div>
+        <div class="filters">
+          <div class="field search-field"><label for="search">Search</label><input id="search" type="search" placeholder="Search creator, show or stable ID…"></div>
+          <div class="field"><label for="status">Status</label><select id="status"><option value="">All statuses</option><option>Needs review</option><option>Qualified</option><option>Rejected</option></select></div>
+          <div class="field"><label for="country">Country</label><select id="country"><option value="">All countries</option></select></div>
+          <div class="field"><label for="platform">Platform</label><select id="platform"><option value="">All platforms</option></select></div>
+          <div class="field"><label for="sort">Sort</label><select id="sort"><option value="status">Status priority</option><option value="name">Creator name</option><option value="recent">Most recent</option><option value="activity">Activity</option></select></div>
+        </div>
+        <div class="table-meta"><span id="count" aria-live="polite"></span><span>Hints are not approvals · missing values remain unresolved</span></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Creator / show</th><th>Country</th><th>Status</th><th>Recent activity</th><th>Evidence</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="pager"><span id="page-label"></span><div class="pager-actions"><button id="prev" type="button">← Previous</button><button id="next" type="button">Next →</button></div></div>
+    </section>
+  </main>
+  <footer class="footer"><strong>Private review tool.</strong> Country and contact values in the review queue are discovery hints. Only approved rows belong in leads.csv. No creator outreach has been sent.</footer>
+  <dialog id="detail">
+    <div class="dialog-head"><div><h2 id="detail-title"></h2><p id="detail-status"></p></div><button class="dialog-close" type="button">Close</button></div>
+    <div class="dialog-body"><div class="detail-links" id="detail-links"></div><div class="detail-grid" id="detail-grid"></div><h3>Draft first message</h3><p class="message" id="detail-message"></p><details><summary>Full evidence and decision record</summary><pre id="detail-json"></pre></details></div>
+  </dialog>
+  <script type="application/json" id="data">__PAYLOAD__</script>
+  <script>
+    'use strict';
+    const data = JSON.parse(document.querySelector('#data').textContent);
+    const $ = selector => document.querySelector(selector);
+    const pageSize = 50;
+    let page = 0;
+    const summary = data.summary || {};
+    const target = Number(summary.run_metrics?.target_leads || 5000);
+    const qualified = Number(summary.qualified || 0);
+    const ratio = target ? Math.min(100, qualified / target * 100) : 0;
+    $('#progress-value').textContent = `${qualified.toLocaleString()} / ${target.toLocaleString()}`;
+    $('#progress-percent').textContent = `${ratio.toFixed(1)}%`;
+    $('#progress-fill').style.width = `${ratio}%`;
+    $('#progress-note').textContent = `${(target - qualified).toLocaleString()} additional approvals needed before the lead-count gate can pass.`;
+    $('#notice-text').textContent = qualified >= target
+      ? 'Lead-count target reached. Complete validation, independent audit, country mix, Priority A and owned-account seed evidence before launch.'
+      : 'Manual review required. Only source-backed approvals count; discovery candidates and hints remain separate.';
+
+    for (const [label, value, note] of [['Dataset', data.rows.length, 'all states'], ['Qualified', qualified, 'source checked'], ['Needs review', Number(summary.pending_review || 0), 'evidence gaps'], ['Rejected', Number(summary.rejected || 0), 'failed gates']]) {
+      const card = document.createElement('article');
+      card.className = 'metric';
+      const title = document.createElement('span');
+      title.className = 'metric-label';
+      title.textContent = label;
+      const total = document.createElement('strong');
+      total.textContent = Number(value).toLocaleString();
+      const detail = document.createElement('small');
+      detail.textContent = note;
+      card.append(title, total, detail);
+      $('#cards').append(card);
+    }
+
+    const platformOf = row => row.primary_platform || row.source_system || (/youtube/i.test(row.stable_creator_id || '') ? 'YouTube' : 'Podcast');
+    for (const [selector, values] of [['#country', data.rows.map(row => row.country_iso2)], ['#platform', data.rows.map(platformOf)]]) {
+      for (const value of [...new Set(values.filter(Boolean))].sort()) {
+        const option = document.createElement('option');
+        option.value = option.textContent = value;
+        $(selector).append(option);
+      }
+    }
+
+    function safeLink(label, url, parent) {
+      try {
+        const parsed = new URL(url);
+        if (!['http:', 'https:'].includes(parsed.protocol)) return;
+        const link = document.createElement('a');
+        link.href = parsed.href;
+        link.textContent = label;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        parent.append(link);
+      } catch {}
+    }
+
+    function detailItem(label, value) {
+      const item = document.createElement('div');
+      item.className = 'detail-item';
+      const title = document.createElement('span');
+      title.textContent = label;
+      const detail = document.createElement('strong');
+      detail.textContent = value || 'Unresolved';
+      item.append(title, detail);
+      return item;
+    }
+
+    function openDetail(row) {
+      $('#detail-title').textContent = row.creator_name || row.stable_creator_id;
+      $('#detail-status').textContent = (row.candidate_status || 'Unresolved') + (row.rejection_reason ? ` · ${row.rejection_reason}` : '');
+      const links = $('#detail-links');
+      links.replaceChildren();
+      safeLink('Official profile ↗', row.profile_url, links);
+      safeLink('Recent content ↗', row.recent_content_url, links);
+      safeLink('Contact source ↗', row.channel_evidence_url, links);
+      safeLink('Publisher feed ↗', row.source_feed_url, links);
+      $('#detail-grid').replaceChildren(
+        detailItem('Stable ID', row.stable_creator_id),
+        detailItem('Country', row.country_iso2),
+        detailItem('Platform', platformOf(row)),
+        detailItem('30-day items', String(row.content_count_30d ?? 'Unresolved')),
+        detailItem('60-day long-form', String(row.longform_count_60d ?? 'Unresolved')),
+        detailItem('Checked', row.checked_date),
+      );
+      $('#detail-json').textContent = JSON.stringify({identity: row.stable_creator_id, country: row.country_iso2, best_channel: row.best_channel, contact: row.channel_handle_or_url, backup: row.backup_channel, commercial: row.monetization_signal, need: row.incubrix_need, notes: row.evidence_notes, metadata: row.metadata}, null, 2);
+      $('#detail-message').textContent = row.first_message || 'No message draft: qualification requirements are incomplete.';
+      $('#detail').showModal();
+    }
+
+    const statusScore = row => row.candidate_status === 'Qualified' ? 0 : row.candidate_status === 'Needs review' ? 1 : 2;
+    function render() {
+      const query = $('#search').value.trim().toLowerCase();
+      const status = $('#status').value;
+      const country = $('#country').value;
+      const platform = $('#platform').value;
+      const sort = $('#sort').value;
+      const filtered = data.rows.filter(row => (!status || row.candidate_status === status) && (!country || row.country_iso2 === country) && (!platform || platformOf(row) === platform) && (!query || [row.creator_name, row.stable_creator_id, row.metadata?.collection_name || ''].join(' ').toLowerCase().includes(query)));
+      filtered.sort((a, b) => sort === 'name' ? (a.creator_name || '').localeCompare(b.creator_name || '') : sort === 'recent' ? (b.last_content_date || '').localeCompare(a.last_content_date || '') : sort === 'activity' ? Number(b.content_count_30d || 0) - Number(a.content_count_30d || 0) : statusScore(a) - statusScore(b) || (a.creator_name || '').localeCompare(b.creator_name || ''));
+      page = Math.min(page, Math.max(0, Math.ceil(filtered.length / pageSize) - 1));
+      const body = $('#rows');
+      body.replaceChildren();
+      for (const row of filtered.slice(page * pageSize, (page + 1) * pageSize)) {
+        const tableRow = document.createElement('tr');
+        const creator = document.createElement('td');
+        creator.className = 'creator';
+        creator.textContent = row.creator_name || 'Unresolved creator';
+        const subtitle = document.createElement('span');
+        subtitle.className = 'sub';
+        subtitle.textContent = row.metadata?.collection_name || row.stable_creator_id;
+        const platformBadge = document.createElement('span');
+        platformBadge.className = 'platform';
+        platformBadge.textContent = platformOf(row);
+        creator.append(subtitle, platformBadge);
+        const countryCell = document.createElement('td');
+        countryCell.textContent = row.country_iso2 || 'Unverified';
+        const statusCell = document.createElement('td');
+        const statusBadge = document.createElement('span');
+        statusBadge.className = `status ${row.candidate_status === 'Qualified' ? 'approved' : row.candidate_status === 'Rejected' ? 'rejected' : ''}`;
+        statusBadge.textContent = row.candidate_status || 'Unresolved';
+        statusCell.append(statusBadge);
+        const activity = document.createElement('td');
+        activity.className = 'activity';
+        const recent = document.createElement('strong');
+        recent.textContent = `${Number(row.content_count_30d || 0).toLocaleString()} items / 30d`;
+        const longform = document.createElement('span');
+        longform.textContent = `${Number(row.longform_count_60d || 0).toLocaleString()} long-form / 60d`;
+        activity.append(recent, longform);
+        const evidence = document.createElement('td');
+        const inspect = document.createElement('button');
+        inspect.type = 'button';
+        inspect.className = 'inspect';
+        inspect.textContent = 'Inspect evidence';
+        inspect.addEventListener('click', () => openDetail(row));
+        evidence.append(inspect);
+        tableRow.append(creator, countryCell, statusCell, activity, evidence);
+        body.append(tableRow);
+      }
+      if (!filtered.length) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 5;
+        cell.className = 'empty';
+        cell.textContent = 'No records match these filters.';
+        row.append(cell);
+        body.append(row);
+      }
+      const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      $('#count').textContent = `${filtered.length.toLocaleString()} matching records`;
+      $('#page-label').textContent = `Page ${page + 1} of ${pages}`;
+      $('#prev').disabled = page === 0;
+      $('#next').disabled = (page + 1) * pageSize >= filtered.length;
+    }
+
+    for (const selector of ['#search', '#status', '#country', '#platform', '#sort']) {
+      $(selector).addEventListener('input', () => { page = 0; render(); });
+    }
+    $('#prev').addEventListener('click', () => { page--; render(); });
+    $('#next').addEventListener('click', () => { page++; render(); });
+    $('.dialog-close').addEventListener('click', () => $('#detail').close());
+    $('#detail').addEventListener('click', event => { if (event.target === $('#detail')) $('#detail').close(); });
+    const savedTheme = localStorage.getItem('incubrix-theme');
+    if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+    $('#theme').addEventListener('click', () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('incubrix-theme', next);
+    });
+    render();
+  </script>
+</body>
+</html>

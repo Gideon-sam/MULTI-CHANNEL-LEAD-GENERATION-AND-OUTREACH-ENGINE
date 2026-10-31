@@ -27,6 +27,9 @@ incubrix-engine = "incubrix_engine.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+incubrix_engine = ["templates/*.html"]
+
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
