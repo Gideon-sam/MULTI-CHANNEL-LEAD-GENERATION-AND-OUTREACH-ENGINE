@@ -3,8 +3,8 @@ from __future__ import annotations
 import argparse
 import asyncio
 import http.server
+import ipaddress
 import json
-import socketserver
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -48,8 +48,15 @@ def _parser() -> argparse.ArgumentParser:
     review.add_argument("--workbook", type=Path, default=Path("output/Human_Review.xlsx"))
     review.add_argument("--queue", type=Path, default=Path("output/research_queue.json"))
     review.add_argument("--reviews", type=Path, default=Path("config/reviews.json"))
-    serve = sub.add_parser("serve", help="serve the local evidence dashboard")
+    serve = sub.add_parser("serve", help="serve the evidence dashboard")
     serve.add_argument("--port", type=int, default=8080)
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--directory", type=Path, default=Path("output"))
+    serve.add_argument(
+        "--allow-public",
+        action="store_true",
+        help="explicitly allow a non-loopback bind; use only behind authenticated HTTPS",
+    )
     seed = sub.add_parser(
         "seed", help="owned-account scheduling, tracking and evidence ledger; never sends"
     )
@@ -107,12 +114,26 @@ def main() -> None:
             store.close()
         return
     if args.command == "serve":
-        directory = root / "output"
+        try:
+            loopback = ipaddress.ip_address(args.host).is_loopback
+        except ValueError:
+            loopback = args.host.casefold() == "localhost"
+        if not loopback and not args.allow_public:
+            print(
+                "Refusing a public bind without --allow-public. The evidence dashboard can "
+                "contain public business contacts; place it behind authenticated HTTPS.",
+                file=sys.stderr,
+            )
+            raise SystemExit(1)
+        directory = args.directory.resolve()
+        if not directory.is_dir():
+            print(f"Dashboard directory does not exist: {directory}", file=sys.stderr)
+            raise SystemExit(1)
         handler = lambda *items, **kwargs: http.server.SimpleHTTPRequestHandler(
             *items, directory=str(directory), **kwargs
         )
-        with socketserver.TCPServer(("127.0.0.1", args.port), handler) as server:
-            print(f"Audit dashboard: http://127.0.0.1:{args.port}/audit_dashboard.html")
+        with http.server.ThreadingHTTPServer((args.host, args.port), handler) as server:
+            print(f"Audit dashboard: http://{args.host}:{args.port}/audit_dashboard.html")
             server.serve_forever()
         return
 
